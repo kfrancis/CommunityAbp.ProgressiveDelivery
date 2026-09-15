@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CommunityAbp.ProgressiveDelivery.OpenTelemetry\CommunityAbp.ProgressiveDelivery.OpenTelemetry.csproj" />
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.Tests\CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

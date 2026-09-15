@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+    <OutputType>Library</OutputType>
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Remove="TUnit" />
+    <PackageReference Remove="Shouldly" />
+    <PackageReference Remove="NSubstitute" />
+    <PackageReference Include="Volo.Abp.TestBase" />
+    <PackageReference Include="Volo.Abp.Autofac" />
+    <PackageReference Include="Volo.Abp.Authorization" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Remove="TUnit.Core" />
+    <Using Remove="Shouldly" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CommunityAbp.ProgressiveDelivery.Domain\CommunityAbp.ProgressiveDelivery.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

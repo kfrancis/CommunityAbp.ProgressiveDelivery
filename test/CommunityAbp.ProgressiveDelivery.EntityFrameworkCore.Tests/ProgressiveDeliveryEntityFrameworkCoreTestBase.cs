@@ -1,0 +1,5 @@
+namespace CommunityAbp.ProgressiveDelivery.EntityFrameworkCore;
+
+public abstract class ProgressiveDeliveryEntityFrameworkCoreTestBase : ProgressiveDeliveryTestBase<ProgressiveDeliveryEntityFrameworkCoreTestModule>
+{
+}

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery.EntityFrameworkCore</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CommunityAbp.ProgressiveDelivery.EntityFrameworkCore\CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.TestBase\CommunityAbp.ProgressiveDelivery.TestBase.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.TestBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CommunityAbp.ProgressiveDelivery.Application\CommunityAbp.ProgressiveDelivery.Application.csproj" />
+    <ProjectReference Include="..\..\src\CommunityAbp.ProgressiveDelivery.AspNetCore\CommunityAbp.ProgressiveDelivery.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\CommunityAbp.ProgressiveDelivery.HttpApi\CommunityAbp.ProgressiveDelivery.HttpApi.csproj" />
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.Tests\CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

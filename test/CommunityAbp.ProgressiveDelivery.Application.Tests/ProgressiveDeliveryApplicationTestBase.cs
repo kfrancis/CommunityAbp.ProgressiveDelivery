@@ -1,0 +1,5 @@
+namespace CommunityAbp.ProgressiveDelivery;
+
+public abstract class ProgressiveDeliveryApplicationTestBase : ProgressiveDeliveryTestBase<ProgressiveDeliveryApplicationTestModule>
+{
+}
