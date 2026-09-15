@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.Abstractions/CommunityAbp.ProgressiveDelivery.Abstractions.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.Application.Contracts/CommunityAbp.ProgressiveDelivery.Application.Contracts.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.Application/CommunityAbp.ProgressiveDelivery.Application.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.AspNetCore/CommunityAbp.ProgressiveDelivery.AspNetCore.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.Domain.Shared/CommunityAbp.ProgressiveDelivery.Domain.Shared.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.Domain/CommunityAbp.ProgressiveDelivery.Domain.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.EntityFrameworkCore/CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.HttpApi.Client/CommunityAbp.ProgressiveDelivery.HttpApi.Client.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.HttpApi/CommunityAbp.ProgressiveDelivery.HttpApi.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.OpenTelemetry/CommunityAbp.ProgressiveDelivery.OpenTelemetry.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/CommunityAbp.ProgressiveDelivery.Application.Tests/CommunityAbp.ProgressiveDelivery.Application.Tests.csproj" />
+    <Project Path="test/CommunityAbp.ProgressiveDelivery.AspNetCore.Tests/CommunityAbp.ProgressiveDelivery.AspNetCore.Tests.csproj" />
+    <Project Path="test/CommunityAbp.ProgressiveDelivery.Domain.Tests/CommunityAbp.ProgressiveDelivery.Domain.Tests.csproj" />
+    <Project Path="test/CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.Tests/CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.Tests.csproj" />
+    <Project Path="test/CommunityAbp.ProgressiveDelivery.TestBase/CommunityAbp.ProgressiveDelivery.TestBase.csproj" />
+  </Folder>
+</Solution>
