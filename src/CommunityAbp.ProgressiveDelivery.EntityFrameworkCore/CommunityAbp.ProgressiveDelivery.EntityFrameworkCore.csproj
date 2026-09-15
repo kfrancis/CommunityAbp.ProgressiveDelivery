@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+    <Description>Entity Framework Core integration (DbContext, mappings, repositories) for CommunityAbp.ProgressiveDelivery.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Domain\CommunityAbp.ProgressiveDelivery.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" />
+  </ItemGroup>
+
+</Project>

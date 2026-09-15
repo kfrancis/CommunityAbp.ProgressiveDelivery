@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+    <Description>ASP.NET Core integration for CommunityAbp.ProgressiveDelivery: client capability constraints from request headers.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Domain\CommunityAbp.ProgressiveDelivery.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore" />
+  </ItemGroup>
+
+</Project>

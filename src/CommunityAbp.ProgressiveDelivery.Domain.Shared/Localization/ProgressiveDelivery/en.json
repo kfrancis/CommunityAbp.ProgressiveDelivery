@@ -1,0 +1,27 @@
+{
+  "culture": "en",
+  "texts": {
+    "Permission:ProgressiveDelivery": "Progressive Delivery",
+    "Permission:Tracks": "Feature tracks",
+    "Permission:Tracks.Manage": "Manage feature tracks",
+    "Permission:Levels": "Feature levels",
+    "Permission:Levels.Manage": "Manage feature levels",
+    "Permission:Assignments": "Assignments",
+    "Permission:Assignments.View": "Inspect assignments",
+    "Permission:Assignments.Override": "Override assignments",
+    "Permission:Rollouts": "Rollouts",
+    "Permission:Rollouts.Manage": "Manage rollouts",
+    "Permission:Telemetry": "Transition history and telemetry",
+    "ProgressiveDelivery:TrackNameAlreadyExists": "A feature track named '{Name}' already exists.",
+    "ProgressiveDelivery:TrackNotFound": "Feature track '{Name}' was not found.",
+    "ProgressiveDelivery:LevelAlreadyExists": "Level {Level} already exists on this track.",
+    "ProgressiveDelivery:LevelNotContiguous": "Levels must be contiguous. The next level for this track is {Expected}, but {Level} was given.",
+    "ProgressiveDelivery:LevelNotFound": "Level {Level} does not exist on this track.",
+    "ProgressiveDelivery:LevelOutOfRange": "Level {Level} is outside the range 0..{Highest} for this track.",
+    "ProgressiveDelivery:OfficialLevelOutOfRange": "The official level must be between 0 and the highest available level ({Highest}).",
+    "ProgressiveDelivery:RolloutAlreadyExists": "A rollout for level {Level} already exists on this track.",
+    "ProgressiveDelivery:RolloutNotFound": "No rollout exists for level {Level} on this track.",
+    "ProgressiveDelivery:RolloutTargetMustBeAboveOfficial": "A rollout target level must be above the official level.",
+    "ProgressiveDelivery:PercentageOutOfRange": "Rollout percentage must be between 0 and 10000 basis points."
+  }
+}

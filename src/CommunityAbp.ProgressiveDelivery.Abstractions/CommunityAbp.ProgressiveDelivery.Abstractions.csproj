@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+    <Description>Framework-agnostic abstractions for CommunityAbp.ProgressiveDelivery: feature tracks, integer feature levels, effective-level resolution, sticky rollout, fallback policies and telemetry hooks. No ABP dependency; safe for lightweight clients.</Description>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+    <Description>Domain layer for CommunityAbp.ProgressiveDelivery: feature tracks, levels, sticky assignments, transition history, effective-level resolution, route execution with safe automatic fallback, and distributed caching.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Domain.Shared\CommunityAbp.ProgressiveDelivery.Domain.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Ddd.Domain" />
+    <PackageReference Include="Volo.Abp.Caching" />
+  </ItemGroup>
+
+</Project>

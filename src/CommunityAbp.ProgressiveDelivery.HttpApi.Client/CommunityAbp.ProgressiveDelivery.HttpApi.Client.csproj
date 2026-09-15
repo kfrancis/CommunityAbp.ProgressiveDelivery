@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+    <Description>HTTP client proxies for CommunityAbp.ProgressiveDelivery. Lightweight: depends only on the application contracts and Volo.Abp.Http.Client, suitable for tiered applications and .NET MAUI clients.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Application.Contracts\CommunityAbp.ProgressiveDelivery.Application.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Http.Client" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery.OpenTelemetry</RootNamespace>
+    <Description>OpenTelemetry instrumentation (ActivitySource + Meter) for CommunityAbp.ProgressiveDelivery: execution duration, counts, errors, fallbacks, demotions and assignments per track and level.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Abstractions\CommunityAbp.ProgressiveDelivery.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Core" />
+    <PackageReference Include="OpenTelemetry.Api" />
+  </ItemGroup>
+
+</Project>

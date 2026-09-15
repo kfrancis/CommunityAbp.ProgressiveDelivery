@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery</RootNamespace>
+    <Description>Application services for CommunityAbp.ProgressiveDelivery: track/level/rollout management, assignment overrides, transition history and support inspection.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Domain\CommunityAbp.ProgressiveDelivery.Domain.csproj" />
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Application.Contracts\CommunityAbp.ProgressiveDelivery.Application.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Ddd.Application" />
+    <PackageReference Include="Volo.Abp.Mapperly" />
+    <PackageReference Include="Riok.Mapperly" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
