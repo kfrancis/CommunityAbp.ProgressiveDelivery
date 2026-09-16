@@ -1,0 +1,14 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.5.4">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <UserSecretsId>848d66b7-43a7-4cfc-822a-baa6b676fa6d</UserSecretsId>
+    <!-- The Aspire CLI bundle is optional for this sample; plain `dotnet run` works. -->
+    <NoWarn>$(NoWarn);ASPIRE010</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Sample.Web\CommunityAbp.ProgressiveDelivery.Sample.Web.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aspire-sample",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "sample/CommunityAbp.ProgressiveDelivery.Sample.AppHost/CommunityAbp.ProgressiveDelivery.Sample.AppHost.csproj", "--launch-profile", "http"],
+      "port": 15272,
+      "url": "http://localhost:15272"
+    }
+  ]
+}

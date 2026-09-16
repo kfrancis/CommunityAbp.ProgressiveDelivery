@@ -271,7 +271,9 @@ level). When every attempt fails the **last exception is rethrown unchanged**, w
 `Exception.Data` (`progressive_delivery.track`, `.level`, `.attempted_levels`, `.previous_failures`, ...).
 
 Every demotion records a `FeatureTransition` with `CorrelationId`, `TraceId`, tenant, exception type, application
-and operation name. Support can correlate an incident by track, level, subject and trace.
+and operation name. Demotions are persisted in their own unit of work *after* the caller's unit of work completes
+(see [ADR 0007](docs/adr/0007-deferred-side-effect-writes.md)), so they survive a failing request and never contend
+with its transaction. Support can correlate an incident by track, level, subject and trace.
 
 Cancellation never triggers fallback.
 
@@ -375,6 +377,15 @@ application contracts, so it works in tiered deployments with `ProgressiveDelive
 Mutating controls are hidden without the matching permission; support staff with `Assignments.View` get a read-only view.
 Styling uses the active theme's Bootstrap variables (Basic and LeptonX). The design source lives in
 [docs/design](docs/design).
+
+## Sample host
+
+`sample/` contains an Aspire-orchestrated ABP MVC host with seeded tracks, dev personas (ops / support) and an
+execution playground. See [sample/README.md](sample/README.md).
+
+```bash
+dotnet run --project sample/CommunityAbp.ProgressiveDelivery.Sample.AppHost --launch-profile http
+```
 
 ## ABP Feature Management vs Progressive Delivery
 

@@ -1,4 +1,9 @@
 <Solution>
+  <Folder Name="/sample/">
+    <Project Path="sample/CommunityAbp.ProgressiveDelivery.Sample.AppHost/CommunityAbp.ProgressiveDelivery.Sample.AppHost.csproj" />
+    <Project Path="sample/CommunityAbp.ProgressiveDelivery.Sample.ServiceDefaults/CommunityAbp.ProgressiveDelivery.Sample.ServiceDefaults.csproj" />
+    <Project Path="sample/CommunityAbp.ProgressiveDelivery.Sample.Web/CommunityAbp.ProgressiveDelivery.Sample.Web.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/CommunityAbp.ProgressiveDelivery.Abstractions/CommunityAbp.ProgressiveDelivery.Abstractions.csproj" />
     <Project Path="src/CommunityAbp.ProgressiveDelivery.Application.Contracts/CommunityAbp.ProgressiveDelivery.Application.Contracts.csproj" />

@@ -1,0 +1,97 @@
+@page
+@model CommunityAbp.ProgressiveDelivery.Sample.Web.Pages.Demo.IndexModel
+@{
+    PageLayout.Content.Title = "Execution playground";
+}
+
+<abp-row>
+    <abp-column size-md="_5">
+        <abp-card>
+            <abp-card-header><abp-card-title>Run <code>IProgressiveDelivery.ExecuteAsync</code></abp-card-title></abp-card-header>
+            <abp-card-body>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label" for="TrackName">Track</label>
+                        <input class="form-control" asp-for="TrackName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="SubjectId">Subject (user id)</label>
+                        <input class="form-control" asp-for="SubjectId" />
+                        <div class="form-text">Leave empty for an anonymous caller (always official level). Seeded users: <code>@SamplePersonas.OpsPersona.UserId</code> (assigned 3), <code>@SamplePersonas.SupportPersona.UserId</code> (assigned 2).</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Routes that throw</label>
+                        @foreach (var level in Model.AvailableLevels)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="FailingLevels" value="@level" id="fail-@level" @(Model.FailingLevels.Contains(level) ? "checked" : "") />
+                                <label class="form-check-label" for="fail-@level">Level @level throws <code>TimeoutException</code></label>
+                            </div>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="PolicyOverride">Fallback policy override</label>
+                        <select class="form-select" asp-for="PolicyOverride" asp-items="Html.GetEnumSelectList<CommunityAbp.ProgressiveDelivery.FallbackPolicy>()">
+                            <option value="">Use the level's own policy</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Execute</button>
+                </form>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+    <abp-column size-md="_7">
+        @if (Model.Before is not null)
+        {
+            <abp-card class="mb-3">
+                <abp-card-header><abp-card-title>Outcome</abp-card-title></abp-card-header>
+                <abp-card-body>
+                    @if (Model.Result is not null)
+                    {
+                        <div class="alert alert-success mb-3"><strong>Result:</strong> @Model.Result</div>
+                    }
+                    @if (Model.Error is not null)
+                    {
+                        <div class="alert alert-danger mb-3"><strong>Surfaced exception:</strong> @Model.Error</div>
+                    }
+                    <table class="table table-sm">
+                        <thead><tr><th></th><th>Before</th><th>After</th></tr></thead>
+                        <tbody>
+                            <tr><th>Official level</th><td>@Model.Before.OfficialLevel</td><td>@Model.After?.OfficialLevel</td></tr>
+                            <tr><th>Assigned level</th><td>@(Model.Before.AssignedLevel?.ToString() ?? "—")</td><td>@(Model.After?.AssignedLevel?.ToString() ?? "—")</td></tr>
+                            <tr><th>Effective level</th><td>@Model.Before.EffectiveLevel</td><td>@Model.After?.EffectiveLevel</td></tr>
+                            <tr><th>Experimental</th><td>@Model.Before.IsExperimental</td><td>@Model.After?.IsExperimental</td></tr>
+                        </tbody>
+                    </table>
+                    <h6>Telemetry events</h6>
+                    <ol class="mb-0">
+                        @foreach (var e in Model.Events)
+                        {
+                            <li><code>@e</code></li>
+                        }
+                    </ol>
+                    <p class="text-muted small mt-3 mb-0">
+                        Demotions and cohort assignments are persisted <em>after</em> the request's unit of work completes, so
+                        "After" still shows the pre-request assignment; execute again (or refresh Inspection) to see it applied.
+                        Now open <a href="/ProgressiveDelivery/Inspection?subjectType=User&subjectId=@Model.SubjectId&trackName=@Model.TrackName">Inspection</a>,
+                        the track's <a href="/ProgressiveDelivery/Transitions">history</a>, or the Aspire dashboard traces for <code>progressive_delivery.execute</code>.
+                    </p>
+                </abp-card-body>
+            </abp-card>
+        }
+        else
+        {
+            <abp-card>
+                <abp-card-body>
+                    <p class="mb-2">Try this sequence with the operations user (assigned level 3 on <code>Cab.Patients.Search</code>):</p>
+                    <ol class="mb-0">
+                        <li>Execute with nothing failing → level 3 route runs.</li>
+                        <li>Tick "Level 3 throws" → level 3 fails (policy <code>Idempotent</code>), level 2 runs in the same call and a demotion to 2 is scheduled.</li>
+                        <li>Execute again with nothing failing → level 2 runs directly; the assignment is now sticky at 2.</li>
+                        <li>Override the policy to <code>None</code> and tick level 2 → the exception surfaces, no demotion.</li>
+                    </ol>
+                </abp-card-body>
+            </abp-card>
+        }
+    </abp-column>
+</abp-row>

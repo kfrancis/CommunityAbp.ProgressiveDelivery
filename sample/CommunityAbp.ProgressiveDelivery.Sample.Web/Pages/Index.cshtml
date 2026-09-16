@@ -1,0 +1,45 @@
+@page
+@model CommunityAbp.ProgressiveDelivery.Sample.Web.Pages.IndexModel
+@{
+    PageLayout.Content.Title = "Progressive Delivery sample";
+}
+
+<abp-row>
+    <abp-column size-md="_8">
+        <abp-card class="mb-3">
+            <abp-card-body>
+                <h4>Click-through host for CommunityAbp.ProgressiveDelivery</h4>
+                <p class="text-muted">
+                    Seeded with the tracks from the design mockups (<code>Cab.Patients.Search</code> and friends), sticky
+                    assignments and transition history. Everything you change is persisted to a local SQLite file.
+                </p>
+                <ul>
+                    <li><a href="/ProgressiveDelivery/Tracks">Feature tracks</a> — overview, levels, rollouts, assignments, history.</li>
+                    <li><a href="/ProgressiveDelivery/Inspection?subjectType=User&subjectId=@SamplePersonas.OpsPersona.UserId">Subject inspection</a> — what the operations user runs and why.</li>
+                    <li><a href="/ProgressiveDelivery/Transitions">Transition history</a> — every durable state change.</li>
+                    <li><a href="/Demo">Execution playground</a> — call <code>IProgressiveDelivery.ExecuteAsync</code>, make a level fail, watch demotion and fallback happen.</li>
+                    <li><a href="/swagger">Swagger</a> — the HTTP API the UI and lightweight clients use.</li>
+                </ul>
+                <p class="text-muted small mb-0">
+                    Traces and metrics (<code>progressive_delivery.*</code>) are exported to the Aspire dashboard.
+                </p>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+    <abp-column size-md="_4">
+        <abp-card>
+            <abp-card-header><abp-card-title>Persona</abp-card-title></abp-card-header>
+            <abp-card-body>
+                <p>Signed in as <strong>@Model.Persona.DisplayName</strong> (<code>@Model.Persona.Role</code>).</p>
+                <p class="text-muted small">
+                    <strong>ops</strong> has every <code>ProgressiveDelivery.*</code> permission.
+                    <strong>support</strong> has only the view permissions; mutating controls disappear.
+                </p>
+                <form method="post" asp-page-handler="Switch" class="d-flex gap-2">
+                    <button type="submit" name="role" value="ops" class="btn btn-sm @(Model.Persona.Role == "ops" ? "btn-primary" : "btn-outline-primary")">Operations</button>
+                    <button type="submit" name="role" value="support" class="btn btn-sm @(Model.Persona.Role == "support" ? "btn-primary" : "btn-outline-primary")">Support (view-only)</button>
+                </form>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+</abp-row>

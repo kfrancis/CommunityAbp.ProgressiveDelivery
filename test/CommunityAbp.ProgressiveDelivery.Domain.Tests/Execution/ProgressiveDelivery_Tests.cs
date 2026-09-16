@@ -240,6 +240,72 @@ public class ProgressiveDelivery_Tests : ProgressiveDeliveryDomainTestBase
         demotion.CorrelationId.ShouldBe("corr-42");
     }
 
+    [Test]
+    public async Task Demotion_Inside_Ambient_Unit_Of_Work_Is_Persisted_After_It_Completes()
+    {
+        var subject = FeatureSubject.User(User);
+        await AssignAsync(Track, subject, 3);
+
+        using (ChangeUser(User))
+        {
+            await WithUnitOfWorkAsync(async () =>
+            {
+                var result = await ProgressiveDelivery.ExecuteAsync(Track, Routes(succeedAt: [2, 1, 0]));
+                result.ShouldBe(2);
+
+                // Deferred: the caller's unit of work still owns the connection.
+                (await FindAssignmentAsync(Track, subject))!.AssignedLevel.ShouldBe(3);
+            });
+        }
+
+        await WaitForAssignmentAsync(subject, 2);
+        await WaitUntilAsync(() => Telemetry.Transitions.Any(t => t.TransitionType == FeatureTransitionType.AutomaticDemotion && t.ToLevel == 2));
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (!condition() && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(50);
+        }
+
+        condition().ShouldBeTrue("condition was not met in time");
+    }
+
+    [Test]
+    public async Task Demotion_Survives_A_Failing_Caller_Unit_Of_Work()
+    {
+        // Search track: level 2 is DemoteOnly, so the exception propagates and the caller's unit of work is rolled back.
+        var subject = FeatureSubject.User(User);
+        await AssignAsync(ProgressiveDeliveryTestData.SearchTrack, subject, 2);
+
+        using (ChangeUser(User))
+        {
+            await Should.ThrowAsync<InvalidOperationException>(() => WithUnitOfWorkAsync(() =>
+                ProgressiveDelivery.ExecuteAsync(ProgressiveDeliveryTestData.SearchTrack, Routes(succeedAt: [1, 0]))));
+        }
+
+        await WaitForAssignmentAsync(subject, 1, ProgressiveDeliveryTestData.SearchTrack);
+    }
+
+    private async Task WaitForAssignmentAsync(FeatureSubject subject, int expectedLevel, string trackName = Track)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (DateTime.UtcNow < deadline)
+        {
+            var assignment = await FindAssignmentAsync(trackName, subject);
+            if (assignment?.AssignedLevel == expectedLevel)
+            {
+                return;
+            }
+
+            await Task.Delay(50);
+        }
+
+        (await FindAssignmentAsync(trackName, subject))!.AssignedLevel.ShouldBe(expectedLevel, "deferred demotion did not persist in time");
+    }
+
     /// <summary>Routes 0..3 returning their level; every level not in <paramref name="succeedAt"/> throws.</summary>
     private static ProgressiveRoutes<int> Routes(int[] succeedAt, List<int>? executed = null)
     {

@@ -1,12 +1,13 @@
 using CommunityAbp.ProgressiveDelivery.Assignments;
 using CommunityAbp.ProgressiveDelivery.Caching;
+using CommunityAbp.ProgressiveDelivery.Execution;
 using CommunityAbp.ProgressiveDelivery.Rollouts;
 using CommunityAbp.ProgressiveDelivery.Subjects;
 using CommunityAbp.ProgressiveDelivery.Tracks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.Uow;
 
 namespace CommunityAbp.ProgressiveDelivery.Resolution;
 
@@ -28,9 +29,7 @@ public class FeatureLevelResolver : IFeatureLevelResolver, ITransientDependency
     private readonly IFeatureSubjectResolver _subjectResolver;
     private readonly IRolloutCohortAllocator _cohortAllocator;
     private readonly IEnumerable<IFeatureLevelConstraintProvider> _constraintProviders;
-    private readonly IFeatureTrackRepository _trackRepository;
-    private readonly FeatureAssignmentManager _assignmentManager;
-    private readonly IUnitOfWorkManager _unitOfWorkManager;
+    private readonly IProgressiveDeliveryWriteScheduler _writeScheduler;
     private readonly ProgressiveDeliveryOptions _options;
     private readonly ILogger<FeatureLevelResolver> _logger;
 
@@ -40,9 +39,7 @@ public class FeatureLevelResolver : IFeatureLevelResolver, ITransientDependency
         IFeatureSubjectResolver subjectResolver,
         IRolloutCohortAllocator cohortAllocator,
         IEnumerable<IFeatureLevelConstraintProvider> constraintProviders,
-        IFeatureTrackRepository trackRepository,
-        FeatureAssignmentManager assignmentManager,
-        IUnitOfWorkManager unitOfWorkManager,
+        IProgressiveDeliveryWriteScheduler writeScheduler,
         IOptions<ProgressiveDeliveryOptions> options,
         ILogger<FeatureLevelResolver> logger)
     {
@@ -51,9 +48,7 @@ public class FeatureLevelResolver : IFeatureLevelResolver, ITransientDependency
         _subjectResolver = subjectResolver;
         _cohortAllocator = cohortAllocator;
         _constraintProviders = constraintProviders;
-        _trackRepository = trackRepository;
-        _assignmentManager = assignmentManager;
-        _unitOfWorkManager = unitOfWorkManager;
+        _writeScheduler = writeScheduler;
         _options = options.Value;
         _logger = logger;
     }
@@ -224,29 +219,20 @@ public class FeatureLevelResolver : IFeatureLevelResolver, ITransientDependency
     }
 
     /// <summary>
-    /// Persists cohort inclusion in an independent unit of work so it survives whatever the caller does.
-    /// Failures are logged and swallowed: the cohort decision is deterministic, so nothing is lost.
+    /// Persists cohort inclusion through <see cref="IProgressiveDeliveryWriteScheduler"/> (deferred past any ambient
+    /// unit of work). Failures are logged by the scheduler: the cohort decision is deterministic, so nothing is lost.
     /// </summary>
-    protected virtual async Task PersistCohortAssignmentAsync(FeatureTrackDefinitionCacheItem definition, FeatureSubject subject, int level, CancellationToken cancellationToken)
+    protected virtual Task PersistCohortAssignmentAsync(FeatureTrackDefinitionCacheItem definition, FeatureSubject subject, int level, CancellationToken cancellationToken)
     {
-        try
-        {
-            using var uow = _unitOfWorkManager.Begin(new AbpUnitOfWorkOptions { IsTransactional = false }, requiresNew: true);
-
-            var track = await _trackRepository.GetAsync(definition.Id, includeDetails: false, cancellationToken);
-            await _assignmentManager.AssignAsync(
-                track,
-                subject,
-                level,
-                FeatureTransitionType.AutomaticPromotion,
-                reason: "Included in rollout cohort",
-                cancellationToken: cancellationToken);
-
-            await uow.CompleteAsync(cancellationToken);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            _logger.LogWarning(ex, "Could not persist rollout cohort assignment for {Subject} on track {Track} (level {Level}).", subject, definition.Name, level);
-        }
+        var trackId = definition.Id;
+        return _writeScheduler.ScheduleAsync(
+            $"cohort assignment level {level} for {subject} on {definition.Name}",
+            async (provider, ct) =>
+            {
+                var track = await provider.GetRequiredService<IFeatureTrackRepository>().GetAsync(trackId, includeDetails: false, ct);
+                await provider.GetRequiredService<FeatureAssignmentManager>().AssignAsync(
+                    track, subject, level, FeatureTransitionType.AutomaticPromotion, "Included in rollout cohort", cancellationToken: ct);
+            },
+            cancellationToken);
     }
 }

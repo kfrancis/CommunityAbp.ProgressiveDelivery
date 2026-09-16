@@ -5,9 +5,9 @@ using CommunityAbp.ProgressiveDelivery.Telemetry;
 using CommunityAbp.ProgressiveDelivery.Tracks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.Uow;
 
 namespace CommunityAbp.ProgressiveDelivery.Execution;
 
@@ -18,9 +18,7 @@ namespace CommunityAbp.ProgressiveDelivery.Execution;
 public class ProgressiveDelivery : IProgressiveDelivery, ITransientDependency
 {
     private readonly IFeatureLevelResolver _resolver;
-    private readonly IFeatureTrackRepository _trackRepository;
-    private readonly FeatureAssignmentManager _assignmentManager;
-    private readonly IUnitOfWorkManager _unitOfWorkManager;
+    private readonly IProgressiveDeliveryWriteScheduler _writeScheduler;
     private readonly IEnumerable<IProgressiveDeliveryTelemetry> _telemetry;
     private readonly IApplicationInfoAccessor _applicationInfo;
     private readonly ProgressiveDeliveryOptions _options;
@@ -28,18 +26,14 @@ public class ProgressiveDelivery : IProgressiveDelivery, ITransientDependency
 
     public ProgressiveDelivery(
         IFeatureLevelResolver resolver,
-        IFeatureTrackRepository trackRepository,
-        FeatureAssignmentManager assignmentManager,
-        IUnitOfWorkManager unitOfWorkManager,
+        IProgressiveDeliveryWriteScheduler writeScheduler,
         IEnumerable<IProgressiveDeliveryTelemetry> telemetry,
         IApplicationInfoAccessor applicationInfo,
         IOptions<ProgressiveDeliveryOptions> options,
         ILogger<ProgressiveDelivery> logger)
     {
         _resolver = resolver;
-        _trackRepository = trackRepository;
-        _assignmentManager = assignmentManager;
-        _unitOfWorkManager = unitOfWorkManager;
+        _writeScheduler = writeScheduler;
         _telemetry = telemetry;
         _applicationInfo = applicationInfo;
         _options = options.Value;
@@ -172,7 +166,11 @@ public class ProgressiveDelivery : IProgressiveDelivery, ITransientDependency
         return resolution.FindLevel(routeLevel)?.FallbackPolicy ?? _options.DefaultFallbackPolicy;
     }
 
-    protected virtual async Task PersistDemotionAsync(
+    /// <summary>
+    /// Persists the demotion through <see cref="IProgressiveDeliveryWriteScheduler"/>: immediately when there is no
+    /// ambient unit of work, otherwise after the caller's unit of work is disposed so the two never contend for the database.
+    /// </summary>
+    protected virtual Task PersistDemotionAsync(
         FeatureLevelResolution resolution,
         int fromLevel,
         int toLevel,
@@ -182,38 +180,28 @@ public class ProgressiveDelivery : IProgressiveDelivery, ITransientDependency
         ProgressiveExecutionContext context,
         CancellationToken cancellationToken)
     {
-        try
+        var trackId = resolution.TrackId!.Value;
+        var subject = resolution.Subject!;
+        var metadata = new Dictionary<string, object?>
         {
-            using var uow = _unitOfWorkManager.Begin(new AbpUnitOfWorkOptions { IsTransactional = false }, requiresNew: true);
+            ["exceptionType"] = exception.GetType().FullName,
+            ["exceptionMessage"] = Truncate(exception.Message, 512),
+            ["failedRouteLevel"] = failedRouteLevel,
+            ["attemptedLevels"] = attempted.ToArray(),
+            ["application"] = context.ApplicationName,
+            ["operation"] = context.OperationName
+        };
+        var reason = $"Level {failedRouteLevel} failed with {exception.GetType().Name}";
 
-            var track = await _trackRepository.GetAsync(resolution.TrackId!.Value, includeDetails: false, cancellationToken);
-            var metadata = new Dictionary<string, object?>
+        return _writeScheduler.ScheduleAsync(
+            $"demotion {fromLevel} -> {toLevel} for {subject} on {resolution.TrackName}",
+            async (provider, ct) =>
             {
-                ["exceptionType"] = exception.GetType().FullName,
-                ["exceptionMessage"] = Truncate(exception.Message, 512),
-                ["failedRouteLevel"] = failedRouteLevel,
-                ["attemptedLevels"] = attempted.ToArray(),
-                ["application"] = context.ApplicationName,
-                ["operation"] = context.OperationName
-            };
-
-            await _assignmentManager.AssignAsync(
-                track,
-                resolution.Subject!,
-                toLevel,
-                FeatureTransitionType.AutomaticDemotion,
-                reason: $"Level {failedRouteLevel} failed with {exception.GetType().Name}",
-                metadata: metadata,
-                cancellationToken: cancellationToken);
-
-            await uow.CompleteAsync(cancellationToken);
-        }
-        catch (Exception persistException) when (persistException is not OperationCanceledException)
-        {
-            _logger.LogError(persistException,
-                "Could not persist automatic demotion {FromLevel} -> {ToLevel} for {Subject} on track {Track}.",
-                fromLevel, toLevel, resolution.Subject, resolution.TrackName);
-        }
+                var track = await provider.GetRequiredService<IFeatureTrackRepository>().GetAsync(trackId, includeDetails: false, ct);
+                await provider.GetRequiredService<FeatureAssignmentManager>().AssignAsync(
+                    track, subject, toLevel, FeatureTransitionType.AutomaticDemotion, reason, metadata, ct);
+            },
+            cancellationToken);
     }
 
     protected static void EnrichException(Exception exception, FeatureLevelResolution resolution, int level, FallbackPolicy policy, IReadOnlyList<int> attempted, IReadOnlyList<Exception> failures)
