@@ -1,0 +1,15 @@
+@page
+@model CommunityAbp.ProgressiveDelivery.Web.Pages.ProgressiveDelivery.Tracks.EditLevelModalModel
+@{
+    Layout = null;
+}
+<abp-dynamic-form abp-model="Level" asp-page="/ProgressiveDelivery/Tracks/EditLevelModal">
+    <abp-modal>
+        <abp-modal-header title="@L["EditLevelN", Model.Level.Level].Value"></abp-modal-header>
+        <abp-modal-body>
+            <div class="mb-3"><span class="pd-mono fw-semibold">@Model.TrackName</span></div>
+            <abp-form-content />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</abp-dynamic-form>

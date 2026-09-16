@@ -1,0 +1,18 @@
+@page
+@model CommunityAbp.ProgressiveDelivery.Web.Pages.ProgressiveDelivery.Tracks.SetOfficialLevelModalModel
+@{
+    Layout = null;
+}
+<form method="post" asp-page="/ProgressiveDelivery/Tracks/SetOfficialLevelModal">
+    <abp-modal>
+        <abp-modal-header title="@L["SetOfficialLevel"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <div class="mb-2"><span class="pd-mono fw-semibold">@Model.Track.Name</span> <span class="text-muted small">@L["CurrentOfficialLevel", Model.Track.OfficialLevel]</span></div>
+            <abp-input asp-for="Input.TrackId" />
+            <abp-select asp-for="Input.OfficialLevel" asp-items="Model.LevelItems" label="@L["OfficialLevel"].Value" />
+            <abp-input asp-for="Input.Reason" label="@L["Reason"].Value" />
+            <div class="alert alert-info small mb-0">@L["SetOfficialLevelHelp"]</div>
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

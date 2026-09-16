@@ -1,0 +1,142 @@
+@page
+@using CommunityAbp.ProgressiveDelivery.Web.Pages.ProgressiveDelivery.Inspection
+@model IndexModel
+@{
+    PageLayout.Content.Title = L["SubjectInspection"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Menu:ProgressiveDelivery"].Value);
+    PageLayout.Content.MenuItemName = ProgressiveDeliveryMenus.Inspection;
+    var canOverride = await AuthorizationService.IsGrantedAsync(ProgressiveDeliveryPermissions.Assignments.Override);
+}
+
+@section styles {
+    <abp-style src="/Pages/ProgressiveDelivery/progressive-delivery.css" />
+}
+
+@section scripts {
+    <abp-script src="/Pages/ProgressiveDelivery/Inspection/index.js" />
+}
+
+<abp-card class="mb-3">
+    <abp-card-body>
+        <form method="get" id="InspectForm">
+            <abp-row>
+                <abp-column size-md="_2">
+                    <abp-select asp-for="SubjectType" asp-items="Model.SubjectTypeItems" label="@L["SubjectType"].Value" />
+                </abp-column>
+                <abp-column size-md="_4">
+                    <abp-input asp-for="SubjectId" label="@L["SubjectId"].Value" info="@L["SubjectIdHelp"].Value" />
+                </abp-column>
+                <abp-column size-md="_3">
+                    <abp-input asp-for="TrackName" label="@L["Track"].Value" info="@L["TrackFilterHelp"].Value" />
+                </abp-column>
+                @if (Model.IsHost)
+                {
+                    <abp-column size-md="_2">
+                        <abp-input asp-for="TenantId" label="@L["TenantId"].Value" info="@L["TenantIdHelp"].Value" />
+                    </abp-column>
+                }
+                <abp-column size-md="_1" class="d-flex align-items-end pb-3">
+                    <abp-button type="submit" text="@L["Inspect"].Value" icon="search" button-type="Primary" />
+                </abp-column>
+            </abp-row>
+        </form>
+    </abp-card-body>
+</abp-card>
+
+@if (Model.HasSearched && !Model.Results.Any())
+{
+    <div class="alert alert-light border">@L["NoTracksToInspect"]</div>
+}
+
+@foreach (var result in Model.Results)
+{
+    <abp-card class="mb-3 pd-inspect-card" data-track-name="@result.Track" data-subject-type="@result.SubjectType" data-subject-id="@result.SubjectId">
+        <abp-card-header>
+            <abp-row>
+                <abp-column size-md="_8">
+                    <abp-card-title>
+                        <span class="pd-mono">@result.Track</span>
+                        @if (!result.TrackExists)
+                        {
+                            <span class="badge bg-secondary-subtle text-secondary ms-2">@L["TrackDoesNotExist"]</span>
+                        }
+                        else if (!result.IsEnabled)
+                        {
+                            <span class="badge bg-secondary-subtle text-secondary ms-2">@L["Disabled"]</span>
+                        }
+                        else if (result.Experimental)
+                        {
+                            <span class="badge bg-info-subtle text-info ms-2">@L["Experimental"]</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-primary-subtle text-primary ms-2">@L["Official"]</span>
+                        }
+                    </abp-card-title>
+                    @if (!string.IsNullOrWhiteSpace(result.TrackDisplayName))
+                    {
+                        <div class="text-muted small">@result.TrackDisplayName</div>
+                    }
+                </abp-column>
+                <abp-column size-md="_4" class="text-end">
+                    @if (canOverride && result.TrackExists)
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-primary pd-inspect-override">@L["Override"]</button>
+                        @if (result.AssignedLevel is not null)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-secondary pd-inspect-reset">@L["ResetToOfficial"]</button>
+                        }
+                    }
+                </abp-column>
+            </abp-row>
+        </abp-card-header>
+        <abp-card-body>
+            <div class="pd-inspect-grid mb-3">
+                <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["OfficialLevel"]</div><div class="pd-kpi-value">@result.OfficialLevel</div></div>
+                <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["AssignedLevel"]</div><div class="pd-kpi-value">@(result.AssignedLevel?.ToString() ?? "—")</div></div>
+                <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["CohortLevel"]</div><div class="pd-kpi-value">@(result.CohortLevel?.ToString() ?? "—")</div></div>
+                <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["EffectiveLevel"]</div><div class="pd-kpi-value text-info">@result.EffectiveLevel</div></div>
+                <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["TenantId"]</div><div class="pd-kpi-value small">@(result.TenantId?.ToString() ?? L["Host"].Value)</div></div>
+            </div>
+
+            @if (result.TrackExists)
+            {
+                <partial name="~/Pages/ProgressiveDelivery/Shared/_LevelLine.cshtml" model="IndexModel.ToLevelLine(result)" />
+            }
+
+            @if (result.Constraints.Any())
+            {
+                <h6 class="mt-3">@L["Constraints"]</h6>
+                <ul class="mb-3">
+                    @foreach (var constraint in result.Constraints)
+                    {
+                        <li><span class="pd-chip">@constraint.Source</span> @L["ConstraintMaxLevel", constraint.MaxLevel] @if (!string.IsNullOrWhiteSpace(constraint.Reason)) { <span class="text-muted">— @constraint.Reason</span> }</li>
+                    }
+                </ul>
+            }
+
+            <h6 class="mt-3">@L["Differences"]</h6>
+            @if (!result.Differences.Any())
+            {
+                <div class="text-muted">@L["NoDifferences"]</div>
+            }
+            else
+            {
+                <table class="table table-sm align-middle mb-0">
+                    <thead><tr><th style="width: 70px">@L["Level"]</th><th>@L["Description"]</th><th>@L["SupportDescription"]</th><th>@L["FallbackPolicy"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var difference in result.Differences)
+                        {
+                            <tr>
+                                <td><span class="pd-pill pd-pill-experimental">@difference.Level</span></td>
+                                <td>@difference.Description</td>
+                                <td class="text-muted small">@difference.SupportDescription</td>
+                                <td><span class="pd-policy pd-policy-@difference.FallbackPolicy">@difference.FallbackPolicy</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </abp-card-body>
+    </abp-card>
+}

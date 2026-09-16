@@ -103,6 +103,7 @@ dotnet add package CommunityAbp.ProgressiveDelivery.Domain
 dotnet add package CommunityAbp.ProgressiveDelivery.EntityFrameworkCore
 dotnet add package CommunityAbp.ProgressiveDelivery.Application
 dotnet add package CommunityAbp.ProgressiveDelivery.HttpApi
+dotnet add package CommunityAbp.ProgressiveDelivery.Web            # optional: MVC / Razor Pages admin + support UI
 dotnet add package CommunityAbp.ProgressiveDelivery.AspNetCore     # optional: client capability header
 dotnet add package CommunityAbp.ProgressiveDelivery.OpenTelemetry  # optional: traces + metrics
 ```
@@ -358,6 +359,23 @@ assignments) and requires `ProgressiveDelivery.Assignments.View`. `…/inspectio
 Lightweight clients call `POST api/progressive-delivery/client/resolve` with their supported levels and receive the
 effective level per track for the calling user (authentication only, no permission).
 
+## Admin and support UI
+
+`CommunityAbp.ProgressiveDelivery.Web` is a standard ABP MVC UI module: add `[DependsOn(typeof(ProgressiveDeliveryWebModule))]`
+to your Web module and a *Progressive Delivery* group appears in the main menu (permission-gated). It depends only on the
+application contracts, so it works in tiered deployments with `ProgressiveDeliveryHttpApiClientModule`.
+
+| Page | Route | Permission |
+|------|-------|------------|
+| Tracks overview (KPIs, table, create/edit/delete) | `/ProgressiveDelivery/Tracks` | `ProgressiveDelivery.Tracks` (+ `.Manage` to change) |
+| Track detail: level line, levels, rollouts, assignments, history, danger zone | `/ProgressiveDelivery/Tracks/Detail?id=` | per tab: `Levels.Manage`, `Rollouts`, `Assignments.View`, `Telemetry` |
+| Subject inspection (differences, constraints, override / reset) | `/ProgressiveDelivery/Inspection` | `ProgressiveDelivery.Assignments.View` (+ `.Override`) |
+| Transition history | `/ProgressiveDelivery/Transitions` | `ProgressiveDelivery.Telemetry` |
+
+Mutating controls are hidden without the matching permission; support staff with `Assignments.View` get a read-only view.
+Styling uses the active theme's Bootstrap variables (Basic and LeptonX). The design source lives in
+[docs/design](docs/design).
+
 ## ABP Feature Management vs Progressive Delivery
 
 | Question                                              | Answered by            |
@@ -381,6 +399,7 @@ Application ───────────────┤   app services (Map
 EntityFrameworkCore ───────┤   DbContext, mappings, repositories
 HttpApi ───────────────────┤   controllers under api/progressive-delivery
 HttpApi.Client ────────────┤   dynamic client proxies (tiered apps, MAUI)
+Web ───────────────────────┤   MVC / Razor Pages admin + support UI (ABP UI module: menu contributor, permissions, embedded pages)
 AspNetCore ────────────────┤   X-ProgressiveDelivery-Capabilities constraint provider
 OpenTelemetry ─────────────┘   ActivitySource + Meter listener
 ```
@@ -411,6 +430,7 @@ Design decisions are recorded in [docs/adr](docs/adr).
 | `CommunityAbp.ProgressiveDelivery.EntityFrameworkCore` | Domain, `Volo.Abp.EntityFrameworkCore` |
 | `CommunityAbp.ProgressiveDelivery.HttpApi` | Application.Contracts, `Volo.Abp.AspNetCore.Mvc` |
 | `CommunityAbp.ProgressiveDelivery.HttpApi.Client` | Application.Contracts, `Volo.Abp.Http.Client` |
+| `CommunityAbp.ProgressiveDelivery.Web` | Application.Contracts, `Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared` |
 | `CommunityAbp.ProgressiveDelivery.AspNetCore` | Domain, `Volo.Abp.AspNetCore` |
 | `CommunityAbp.ProgressiveDelivery.OpenTelemetry` | Abstractions, `Volo.Abp.Core`, `OpenTelemetry.Api` |
 
@@ -437,7 +457,7 @@ Support staff with `Assignments.View` can inspect without being able to change r
   minimum sample counts and observation windows, driven by a background worker. The abstractions and domain model
   are in place; no naive "average is lower, therefore promote" logic will ship.
 - Tenant-scoped rollouts and tenant maximum levels as first-class entities (today: constraint providers).
-- Admin UI (Blazor / MVC) for tracks, rollouts, assignments and transition history.
+- Blazor UI (`CommunityAbp.ProgressiveDelivery.Blazor`) mirroring the MVC pages.
 - `CommunityAbp.ProgressiveDelivery.Sentry` implementing `IProgressiveDeliveryTelemetry`.
 - Client SDK for .NET MAUI: `IProgressiveDelivery` over `HttpApi.Client` with local capability constraints.
 - Shadow execution (run the candidate, return the official result, compare).

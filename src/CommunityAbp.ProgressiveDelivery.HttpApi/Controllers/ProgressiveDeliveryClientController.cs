@@ -1,8 +1,7 @@
-using CommunityAbp.ProgressiveDelivery.Client;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
 
-namespace CommunityAbp.ProgressiveDelivery.Controllers;
+namespace CommunityAbp.ProgressiveDelivery.Client;
 
 [RemoteService(Name = ProgressiveDeliveryRemoteServiceConsts.RemoteServiceName)]
 [Area(ProgressiveDeliveryRemoteServiceConsts.ModuleName)]

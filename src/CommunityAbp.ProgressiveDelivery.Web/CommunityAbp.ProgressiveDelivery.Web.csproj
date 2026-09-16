@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>CommunityAbp.ProgressiveDelivery.Web</RootNamespace>
+    <OutputType>Library</OutputType>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+    <Description>ASP.NET Core MVC / Razor Pages administration and support UI for CommunityAbp.ProgressiveDelivery: tracks, levels, rollouts, assignments, subject inspection and transition history. Theme-agnostic (Basic, LeptonX).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommunityAbp.ProgressiveDelivery.Application.Contracts\CommunityAbp.ProgressiveDelivery.Application.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\**\*.css" />
+    <EmbeddedResource Include="Pages\**\*.js" />
+    <Content Remove="Pages\**\*.css" />
+    <Content Remove="Pages\**\*.js" />
+  </ItemGroup>
+
+</Project>

@@ -35,7 +35,10 @@ Modals (`state.modal`): `promote`, `disable`, `del`, `suspend`, `remove`, `reset
 - Percentages displayed as `25.00 %`, stored as basis points (`2500`).
 - Tenant context in the top bar; host users can switch tenant when inspecting.
 
-## Implementation plan (ABP UI module conventions)
+## Implementation status (ABP UI module conventions)
+
+`CommunityAbp.ProgressiveDelivery.Web` (MVC / Razor Pages) implements screens `tracks`, `track`, `inspect`, `history`,
+plus the view-only variants via permission gating. Blazor is pending.
 
 The UI ships as ABP UI modules, not as a standalone app:
 

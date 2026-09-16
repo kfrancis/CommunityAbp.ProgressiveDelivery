@@ -10,6 +10,7 @@
     <Project Path="src/CommunityAbp.ProgressiveDelivery.HttpApi.Client/CommunityAbp.ProgressiveDelivery.HttpApi.Client.csproj" />
     <Project Path="src/CommunityAbp.ProgressiveDelivery.HttpApi/CommunityAbp.ProgressiveDelivery.HttpApi.csproj" />
     <Project Path="src/CommunityAbp.ProgressiveDelivery.OpenTelemetry/CommunityAbp.ProgressiveDelivery.OpenTelemetry.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.Web/CommunityAbp.ProgressiveDelivery.Web.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/CommunityAbp.ProgressiveDelivery.Application.Tests/CommunityAbp.ProgressiveDelivery.Application.Tests.csproj" />
@@ -17,5 +18,6 @@
     <Project Path="test/CommunityAbp.ProgressiveDelivery.Domain.Tests/CommunityAbp.ProgressiveDelivery.Domain.Tests.csproj" />
     <Project Path="test/CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.Tests/CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.Tests.csproj" />
     <Project Path="test/CommunityAbp.ProgressiveDelivery.TestBase/CommunityAbp.ProgressiveDelivery.TestBase.csproj" />
+    <Project Path="test/CommunityAbp.ProgressiveDelivery.Web.Tests/CommunityAbp.ProgressiveDelivery.Web.Tests.csproj" />
   </Folder>
 </Solution>

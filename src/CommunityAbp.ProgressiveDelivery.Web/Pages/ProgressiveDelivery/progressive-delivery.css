@@ -1,0 +1,53 @@
+/* CommunityAbp.ProgressiveDelivery admin UI. Colours come from the active theme's Bootstrap variables so
+   Basic and LeptonX both render it; only the semantic mapping lives here. */
+.pd-mono { font-family: var(--bs-font-monospace); font-size: .92em; }
+
+.pd-kpi-label { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--bs-secondary-color); }
+.pd-kpi-value { font-size: 1.75rem; font-weight: 600; line-height: 1.2; }
+.pd-kpi-meta { font-size: .8rem; color: var(--bs-secondary-color); }
+
+.pd-pill { display: inline-block; min-width: 1.8em; padding: .1em .5em; border-radius: 999px; font-family: var(--bs-font-monospace); font-size: .85em; text-align: center; border: 1px solid transparent; }
+.pd-pill-official { background: var(--bs-primary); color: #fff; }
+.pd-pill-experimental { border-color: var(--bs-info); color: var(--bs-info); border-style: dashed; }
+.pd-pill-muted { background: var(--bs-secondary-bg); color: var(--bs-secondary-color); }
+
+.pd-level-line { display: flex; align-items: flex-start; gap: 0; padding: .5rem 0; overflow-x: auto; }
+.pd-level-node { flex: 1 1 auto; min-width: 88px; }
+.pd-level-node.pd-level-last { flex: 0 0 auto; }
+.pd-level-pill-row { display: flex; align-items: center; }
+.pd-level-pill { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 999px; font-family: var(--bs-font-monospace); font-weight: 600; border: 1px solid var(--bs-border-color); background: var(--bs-body-bg); color: var(--bs-secondary-color); }
+.pd-level-connector { flex: 1 1 auto; height: 2px; background: var(--bs-border-color); margin: 0 6px; }
+.pd-level-label { font-size: .72rem; margin-top: .35rem; color: var(--bs-secondary-color); }
+.pd-level-sub { font-size: .72rem; color: var(--bs-secondary-color); }
+.pd-level-included .pd-level-pill { background: var(--bs-primary-bg-subtle); border-color: transparent; color: var(--bs-primary); }
+.pd-level-official .pd-level-pill { background: var(--bs-primary); border-color: var(--bs-primary); color: #fff; }
+.pd-level-official .pd-level-label { color: var(--bs-primary); font-weight: 600; }
+.pd-level-experimental .pd-level-pill { border: 1px dashed var(--bs-info); color: var(--bs-info); }
+.pd-level-experimental .pd-level-label, .pd-level-experimental .pd-level-sub { color: var(--bs-info); }
+.pd-level-effective .pd-level-pill { background: var(--bs-info-bg-subtle); border: 2px solid var(--bs-info); color: var(--bs-info); }
+.pd-level-effective .pd-level-label { color: var(--bs-info); font-weight: 600; }
+.pd-level-capped .pd-level-pill { border: 1px dashed var(--bs-border-color); color: var(--bs-tertiary-color); }
+.pd-level-capped .pd-level-label { color: var(--bs-warning); }
+.pd-level-line-compact .pd-level-node { min-width: 64px; }
+.pd-level-line-compact .pd-level-pill { width: 28px; height: 28px; font-size: .85em; }
+
+.pd-policy { font-family: var(--bs-font-monospace); font-size: .8em; padding: .1em .5em; border-radius: 4px; border: 1px solid var(--bs-border-color); }
+.pd-policy-None { background: var(--bs-primary-bg-subtle); color: var(--bs-primary); border-color: transparent; }
+.pd-policy-DemoteOnly, .pd-policy-SafeRead, .pd-policy-Idempotent { background: var(--bs-info-bg-subtle); color: var(--bs-info); border-color: transparent; }
+
+.pd-transition { font-family: var(--bs-font-monospace); font-size: .8em; padding: .15em .5em; border-radius: 4px; }
+.pd-transition-Promotion, .pd-transition-AutomaticPromotion, .pd-transition-OfficialLevelChanged { background: var(--bs-primary-bg-subtle); color: var(--bs-primary); }
+.pd-transition-ManualOverride { background: var(--bs-info-bg-subtle); color: var(--bs-info); }
+.pd-transition-AutomaticDemotion { background: var(--bs-warning-bg-subtle); color: var(--bs-warning-text-emphasis); }
+.pd-transition-EmergencyOverride { background: var(--bs-danger-bg-subtle); color: var(--bs-danger); }
+.pd-transition-AdministrativeReset { background: var(--bs-secondary-bg); color: var(--bs-secondary-color); }
+
+.pd-chip { display: inline-block; font-family: var(--bs-font-monospace); font-size: .75em; padding: .05em .45em; border: 1px solid var(--bs-border-color); border-radius: 4px; background: var(--bs-tertiary-bg); cursor: copy; }
+
+.pd-rollout-card { border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; }
+.pd-rollout-pct { font-size: 1.6rem; font-weight: 600; font-family: var(--bs-font-monospace); }
+
+.pd-danger-zone { border: 1px solid var(--bs-danger-border-subtle); border-radius: var(--bs-border-radius); padding: 1rem; }
+
+.pd-inspect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
+.pd-inspect-cell .pd-kpi-value { font-family: var(--bs-font-monospace); }

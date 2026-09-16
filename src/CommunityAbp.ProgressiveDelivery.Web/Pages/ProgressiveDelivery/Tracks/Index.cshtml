@@ -1,0 +1,69 @@
+@page
+@model CommunityAbp.ProgressiveDelivery.Web.Pages.ProgressiveDelivery.Tracks.IndexModel
+@{
+    PageLayout.Content.Title = L["Tracks"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Menu:ProgressiveDelivery"].Value);
+    PageLayout.Content.MenuItemName = ProgressiveDeliveryMenus.Tracks;
+    var canManage = await AuthorizationService.IsGrantedAsync(ProgressiveDeliveryPermissions.Tracks.Manage);
+}
+
+@section styles {
+    <abp-style src="/Pages/ProgressiveDelivery/progressive-delivery.css" />
+}
+
+@section scripts {
+    <abp-script src="/Pages/ProgressiveDelivery/Tracks/index.js" />
+}
+
+<abp-row class="mb-3 pd-kpis">
+    <abp-column size-md="_3">
+        <abp-card>
+            <abp-card-body>
+                <div class="pd-kpi-label">@L["Tracks"]</div>
+                <div class="pd-kpi-value">@Model.TrackCount</div>
+                <div class="pd-kpi-meta">@L["KpiDisabled", Model.DisabledCount]</div>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+    <abp-column size-md="_3">
+        <abp-card>
+            <abp-card-body>
+                <div class="pd-kpi-label">@L["ActiveRollouts"]</div>
+                <div class="pd-kpi-value">@Model.ActiveRolloutCount</div>
+                <div class="pd-kpi-meta">@L["KpiPaused", Model.PausedRolloutCount]</div>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+    <abp-column size-md="_3">
+        <abp-card>
+            <abp-card-body>
+                <div class="pd-kpi-label">@L["ExperimentalLevels"]</div>
+                <div class="pd-kpi-value">@Model.ExperimentalLevelCount</div>
+                <div class="pd-kpi-meta">@L["KpiAboveOfficial"]</div>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+</abp-row>
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["Tracks"]</abp-card-title>
+                <p class="text-muted mb-0 small">@L["TracksIntro"]</p>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <div class="d-inline-flex gap-2 align-items-center">
+                    <input id="TrackFilter" class="form-control form-control-sm" placeholder="@L["FilterByName"]" style="width: 220px" />
+                    @if (canManage)
+                    {
+                        <abp-button id="NewTrackButton" text="@L["NewTrack"].Value" icon="plus" button-type="Primary" size="Small" />
+                    }
+                </div>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="TracksTable"></abp-table>
+    </abp-card-body>
+</abp-card>

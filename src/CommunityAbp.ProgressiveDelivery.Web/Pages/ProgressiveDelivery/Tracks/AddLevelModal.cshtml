@@ -1,0 +1,22 @@
+@page
+@model CommunityAbp.ProgressiveDelivery.Web.Pages.ProgressiveDelivery.Tracks.AddLevelModalModel
+@{
+    Layout = null;
+}
+<abp-dynamic-form abp-model="Level" asp-page="/ProgressiveDelivery/Tracks/AddLevelModal">
+    <abp-modal>
+        <abp-modal-header title="@L["AddLevelN", Model.NextLevel].Value"></abp-modal-header>
+        <abp-modal-body>
+            <p class="text-muted small">@L["AddLevelHelp", Model.TrackName, Model.NextLevel]</p>
+            <abp-form-content />
+            <div class="alert alert-light border small mb-0">
+                <strong>@L["FallbackPolicy"]</strong><br />
+                <span class="pd-mono">None</span> &mdash; @L["Policy:None"]<br />
+                <span class="pd-mono">DemoteOnly</span> &mdash; @L["Policy:DemoteOnly"]<br />
+                <span class="pd-mono">SafeRead</span> &mdash; @L["Policy:SafeRead"]<br />
+                <span class="pd-mono">Idempotent</span> &mdash; @L["Policy:Idempotent"]
+            </div>
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</abp-dynamic-form>

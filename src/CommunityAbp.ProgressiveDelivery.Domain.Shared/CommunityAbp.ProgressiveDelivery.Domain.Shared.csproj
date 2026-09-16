@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Validation" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
   </ItemGroup>
 
   <ItemGroup>

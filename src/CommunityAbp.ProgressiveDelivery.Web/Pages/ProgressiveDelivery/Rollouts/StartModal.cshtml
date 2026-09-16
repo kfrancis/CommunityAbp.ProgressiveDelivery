@@ -1,0 +1,19 @@
+@page
+@model CommunityAbp.ProgressiveDelivery.Web.Pages.ProgressiveDelivery.Rollouts.StartModalModel
+@{
+    Layout = null;
+}
+<form method="post" asp-page="/ProgressiveDelivery/Rollouts/StartModal">
+    <abp-modal>
+        <abp-modal-header title="@L["NewRollout"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <div class="mb-2"><span class="pd-mono fw-semibold">@Model.TrackName</span></div>
+            <p class="text-muted small">@L["NewRolloutHelp"]</p>
+            <abp-input asp-for="Input.TrackId" />
+            <abp-select asp-for="Input.TargetLevel" asp-items="Model.LevelItems" label="@L["TargetLevel"].Value" />
+            <abp-input asp-for="Input.Percentage" label="@L["Percentage"].Value" info="@L["PercentageHelp"].Value" />
+            <abp-input asp-for="Input.AllowSkippingIntermediateLevels" label="@L["AllowSkippingIntermediateLevels"].Value" info="@L["AllowSkippingIntermediateLevelsHelp"].Value" />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

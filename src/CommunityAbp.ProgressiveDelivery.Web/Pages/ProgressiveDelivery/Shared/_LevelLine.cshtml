@@ -1,0 +1,28 @@
+@model CommunityAbp.ProgressiveDelivery.Web.Pages.ProgressiveDelivery.Shared.LevelLineViewModel
+<div class="pd-level-line @(Model.Compact ? "pd-level-line-compact" : "")" role="list">
+    @for (var level = 0; level <= Model.HighestLevel; level++)
+    {
+        var state = Model.StateOf(level);
+        var title = Model.Titles.TryGetValue(level, out var t) ? t : null;
+        var rollout = Model.RolloutLabels.TryGetValue(level, out var r) ? r : null;
+        var isLast = level == Model.HighestLevel;
+        <div class="pd-level-node pd-level-@state @(isLast ? "pd-level-last" : "")" role="listitem" title="@title">
+            <div class="pd-level-pill-row">
+                <span class="pd-level-pill">@level</span>
+                @if (!isLast)
+                {
+                    <span class="pd-level-connector"></span>
+                }
+            </div>
+            <div class="pd-level-label">@L["LevelState:" + state]</div>
+            @if (rollout is not null)
+            {
+                <div class="pd-level-sub pd-mono">@rollout</div>
+            }
+            else if (Model.AssignedLevel == level && Model.EffectiveLevel != level)
+            {
+                <div class="pd-level-sub">@L["LevelState:assigned"]</div>
+            }
+        </div>
+    }
+</div>

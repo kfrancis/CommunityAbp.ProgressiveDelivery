@@ -1,7 +1,7 @@
 using CommunityAbp.ProgressiveDelivery.Localization;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace CommunityAbp.ProgressiveDelivery.Controllers;
+namespace CommunityAbp.ProgressiveDelivery;
 
 public abstract class ProgressiveDeliveryController : AbpControllerBase
 {

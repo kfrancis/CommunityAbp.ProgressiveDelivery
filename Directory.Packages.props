@@ -22,6 +22,8 @@
     <PackageVersion Include="Volo.Abp.EntityFrameworkCore.Sqlite" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.AspNetCore" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.AspNetCore.Mvc" Version="$(AbpVersion)" />
+    <PackageVersion Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="$(AbpVersion)" />
+    <PackageVersion Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.AspNetCore.TestBase" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.Http.Client" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.Autofac" Version="$(AbpVersion)" />
@@ -31,6 +33,7 @@
   <ItemGroup Label="Libraries">
     <PackageVersion Include="Riok.Mapperly" Version="4.3.1" />
     <PackageVersion Include="OpenTelemetry.Api" Version="1.18.0" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.12" />
   </ItemGroup>
 
   <ItemGroup Label="Build">
