@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  a { color: #0f766e; text-decoration: none; }
+  a:hover { color: #0b5a54; text-decoration: underline; }
+  [data-pd="light"] {
+    --bg:#f4f6f7; --surface:#ffffff; --surface2:#f9fafb; --border:#e3e8ea; --border2:#eef2f3;
+    --ink:#101a1e; --ink2:#4b5b62; --ink3:#7c8b93;
+    --pri:#0f766e; --on-pri:#ffffff; --pri-bg:#e4f1ef;
+    --acc:#5b46c4; --on-acc:#ffffff; --acc-bg:#ece9fa;
+    --warn:#a4540b; --on-warn:#ffffff; --warn-bg:#fbf0e3;
+    --dgr:#b42318; --on-dgr:#ffffff; --dgr-bg:#fbeae8;
+    --side-bg:#0e2427; --side-ink:#e7f1f0; --side-ink2:#8fa9a9; --side-hover:#16343708; --side-border:#1c3b3e;
+    --shadow:0 1px 2px rgba(16,26,30,.06), 0 8px 24px rgba(16,26,30,.06);
+  }
+  [data-pd="dark"] {
+    --bg:#0e1316; --surface:#161d21; --surface2:#1b2428; --border:#2a353a; --border2:#222c31;
+    --ink:#e6eef0; --ink2:#9fb0b6; --ink3:#77888f;
+    --pri:#2ab8a8; --on-pri:#06231f; --pri-bg:#0e2f2c;
+    --acc:#a99cf0; --on-acc:#181140; --acc-bg:#241f45;
+    --warn:#e0a458; --on-warn:#241503; --warn-bg:#31210f;
+    --dgr:#f2827a; --on-dgr:#2a0a08; --dgr-bg:#37120f;
+    --side-bg:#0a1114; --side-ink:#dde7e9; --side-ink2:#7f9298; --side-hover:#ffffff0d; --side-border:#1e282c;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+  [data-pd="dark"] a { color: #2ab8a8; }
+  [data-pd="dark"] a:hover { color: #55cfc1; }
+</style>
+</helmet>
+
+<div data-pd="{{ theme }}" style="display:flex; min-height:100vh; background:var(--bg); color:var(--ink); font-family:'IBM Plex Sans',system-ui,sans-serif; font-size:13.5px; line-height:1.5;">
+
+  <div style="width:252px; flex:0 0 252px; background:var(--side-bg); color:var(--side-ink); display:flex; flex-direction:column; border-right:1px solid var(--side-border);">
+    <div style="height:56px; display:flex; align-items:center; gap:10px; padding:0 18px; border-bottom:1px solid var(--side-border);">
+      <div style="width:22px; height:22px; border-radius:6px; background:var(--pri); display:grid; place-items:center; color:var(--on-pri); font-weight:700; font-size:11px;">PD</div>
+      <div style="font-weight:600; letter-spacing:-.01em;">Cab Admin</div>
+    </div>
+    <div style="padding:16px 12px; display:flex; flex-direction:column; gap:2px; overflow:auto;">
+      <div style="font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--side-ink2); padding:8px 8px 6px;">Progressive Delivery</div>
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="4">
+        <div onClick="{{ item.go }}" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 10px; border-radius:6px; cursor:pointer; font-weight:500; background:{{ item.bg }}; color:{{ item.fg }}; border-left:2px solid {{ item.bar }};" style-hover="background:#ffffff12;">
+          <span>{{ item.label }}</span>
+          <span style="font-size:11px; font-family:'IBM Plex Mono',monospace; color:{{ item.metaC }};">{{ item.meta }}</span>
+        </div>
+      </sc-for>
+      <div style="font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--side-ink2); padding:18px 8px 6px;">Support staff views</div>
+      <sc-for list="{{ nav2 }}" as="item" hint-placeholder-count="3">
+        <div onClick="{{ item.go }}" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 10px; border-radius:6px; cursor:pointer; font-weight:500; background:{{ item.bg }}; color:{{ item.fg }}; border-left:2px solid {{ item.bar }};" style-hover="background:#ffffff12;">
+          <span>{{ item.label }}</span>
+          <span style="font-size:11px; font-family:'IBM Plex Mono',monospace; color:{{ item.metaC }};">{{ item.meta }}</span>
+        </div>
+      </sc-for>
+      <div style="font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--side-ink2); padding:18px 8px 6px;">Other modules</div>
+      <div style="padding:7px 12px; color:var(--side-ink2);">Identity</div>
+      <div style="padding:7px 12px; color:var(--side-ink2);">Tenant management</div>
+      <div style="padding:7px 12px; color:var(--side-ink2);">Audit logs</div>
+    </div>
+    <div style="margin-top:auto; padding:14px 18px; border-top:1px solid var(--side-border); font-size:11.5px; color:var(--side-ink2);">CommunityAbp.ProgressiveDelivery <span style="font-family:'IBM Plex Mono',monospace;">1.3.0</span></div>
+  </div>
+
+  <div style="flex:1; min-width:0; display:flex; flex-direction:column;">
+
+    <div style="height:56px; display:flex; align-items:center; gap:16px; padding:0 22px; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:5;">
+      <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink3); min-width:0;">
+        <span>Progressive Delivery</span>
+        <span>/</span>
+        <span style="color:var(--ink); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ crumb }}</span>
+      </div>
+      <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+        <div style="display:flex; align-items:center; gap:8px; padding:5px 10px; border:1px solid var(--border); border-radius:6px; background:var(--surface2);">
+          <span style="font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink3);">Tenant</span>
+          <span style="font-weight:600;">{{ tenant }}</span>
+          <span onClick="{{ cycleTenant }}" style="color:var(--pri); cursor:pointer; font-size:12px; font-weight:600;">switch</span>
+        </div>
+        <div onClick="{{ toggleTheme }}" style="display:flex; align-items:center; gap:6px; padding:6px 10px; border:1px solid var(--border); border-radius:6px; cursor:pointer; font-weight:500;" style-hover="background:var(--surface2);">{{ themeLabel }}</div>
+        <div style="display:flex; align-items:center; gap:8px; padding-left:10px; border-left:1px solid var(--border);">
+          <div style="width:26px; height:26px; border-radius:50%; background:var(--pri-bg); color:var(--pri); display:grid; place-items:center; font-weight:600; font-size:11px;">{{ userInitials }}</div>
+          <div style="line-height:1.2;">
+            <div style="font-weight:600;">{{ userName }}</div>
+            <div style="font-size:11px; color:var(--ink3);">{{ userRole }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1; padding:24px 22px 64px; min-width:0;">
+
+      <sc-if value="{{ isTracks }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1280px; display:flex; flex-direction:column; gap:18px;">
+          <div style="display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap;">
+            <div style="min-width:0;">
+              <h1 style="margin:0 0 4px; font-size:22px; font-weight:600; letter-spacing:-.015em;">Feature tracks</h1>
+              <p style="margin:0; color:var(--ink2); max-width:62ch; text-wrap:pretty;">Each track is an independently versioned behaviour with cumulative integer levels. Tracks never share state.</p>
+            </div>
+            <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+              <input placeholder="Filter by name" value="{{ q }}" onChange="{{ setQ }}" style="padding:7px 10px; width:220px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--ink); font-family:inherit; font-size:13px;" />
+              <div onClick="{{ openNewTrack }}" style="padding:8px 14px; border-radius:6px; background:var(--pri); color:var(--on-pri); font-weight:600; cursor:pointer;" style-hover="opacity:.9;">New track</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px;">
+            <sc-for list="{{ stats }}" as="item" hint-placeholder-count="4">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 16px;">
+                <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">{{ item.label }}</div>
+                <div style="font-size:24px; font-weight:600; letter-spacing:-.02em; margin-top:4px; color:{{ item.color }};">{{ item.value }}</div>
+                <div style="font-size:12px; color:var(--ink3);">{{ item.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; overflow-x:auto;">
+            <div style="min-width:960px; display:grid; grid-template-columns:minmax(220px,2fr) 108px 100px minmax(130px,1fr) 110px minmax(180px,1.2fr); gap:12px; padding:10px 16px; border-bottom:1px solid var(--border); background:var(--surface2); font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">
+              <div>Track</div><div>Official / highest</div><div>State</div><div>Active rollouts</div><div>Demotions 24 h</div><div>Last transition</div>
+            </div>
+            <sc-for list="{{ trackRows }}" as="item" hint-placeholder-count="6">
+              <div onClick="{{ item.go }}" style="min-width:960px; display:grid; grid-template-columns:minmax(220px,2fr) 108px 100px minmax(130px,1fr) 110px minmax(180px,1.2fr); gap:12px; padding:12px 16px; border-bottom:1px solid var(--border2); cursor:pointer; align-items:center;" style-hover="background:var(--surface2);">
+                <div style="min-width:0;">
+                  <div style="font-family:'IBM Plex Mono',monospace; font-weight:500; overflow:hidden; text-overflow:ellipsis;">{{ item.name }}</div>
+                  <div style="font-size:12px; color:var(--ink3);">{{ item.display }}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="min-width:24px; height:24px; padding:0 7px; border-radius:12px; background:var(--pri); color:var(--on-pri); font-weight:600; font-size:12px; display:grid; place-items:center;">{{ item.official }}</span>
+                  <span style="color:var(--ink3);">/</span>
+                  <span style="min-width:24px; height:24px; padding:0 7px; border-radius:12px; border:1px dashed {{ item.highC }}; color:{{ item.highC }}; font-weight:600; font-size:12px; display:grid; place-items:center;">{{ item.highest }}</span>
+                </div>
+                <div><span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:{{ item.stateBg }}; color:{{ item.stateC }};">{{ item.state }}</span></div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:{{ item.rolloutC }};">{{ item.rollouts }}</div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:{{ item.demC }}; font-weight:{{ item.demW }};">{{ item.demotions }}</div>
+                <div style="min-width:0;">
+                  <div style="color:{{ item.lastC }}; font-weight:500; overflow:hidden; text-overflow:ellipsis;">{{ item.last }}</div>
+                  <div style="font-size:12px; color:var(--ink3);">{{ item.lastWhen }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="min-width:960px; padding:10px 16px; font-size:12px; color:var(--ink3); display:flex; justify-content:space-between; gap:16px;">
+              <span>{{ trackCount }}</span>
+              <span>Demotion counts come from telemetry and read “n/a” when no exporter is configured.</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTrack }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1280px; display:flex; flex-direction:column; gap:18px;">
+
+          <sc-if value="{{ viewOnly }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; gap:12px; align-items:flex-start; background:var(--acc-bg); border:1px solid var(--acc); border-radius:8px; padding:12px 14px;">
+              <div style="font-weight:700; color:var(--acc);">Annotated</div>
+              <div style="color:var(--ink2); text-wrap:pretty;">Support staff view: the signed-in user holds <span style="font-family:'IBM Plex Mono',monospace;">ProgressiveDelivery.Assignments.View</span> and <span style="font-family:'IBM Plex Mono',monospace;">.Tracks</span> only. Promotion, level editing and rollout controls are hidden; row actions render disabled with a permission tooltip.</div>
+            </div>
+          </sc-if>
+
+          <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+            <div style="min-width:0;">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <h1 style="margin:0; font-size:22px; font-weight:600; font-family:'IBM Plex Mono',monospace; letter-spacing:-.01em;">Cab.Patients.Search</h1>
+                <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:var(--pri-bg); color:var(--pri);">Enabled</span>
+              </div>
+              <p style="margin:6px 0 0; color:var(--ink2);">Patient search engine · host-level track · assignments are tenant-scoped</p>
+            </div>
+            <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+              <div onClick="{{ openInspect }}" style="padding:8px 13px; border-radius:6px; border:1px solid var(--border); font-weight:600; cursor:pointer; background:var(--surface);" style-hover="background:var(--surface2);">Inspect a subject</div>
+              <sc-if value="{{ canManage }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ openPromote }}" style="padding:8px 13px; border-radius:6px; background:var(--pri); color:var(--on-pri); font-weight:600; cursor:pointer;" style-hover="opacity:.9;">Promote to official…</div>
+              </sc-if>
+              <sc-if value="{{ viewOnly }}" hint-placeholder-val="{{ false }}">
+                <div title="Requires ProgressiveDelivery.Tracks.Manage" style="padding:8px 13px; border-radius:6px; border:1px solid var(--border); color:var(--ink3); font-weight:600; cursor:not-allowed; background:var(--surface2);">Promote to official…</div>
+              </sc-if>
+            </div>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px 24px 18px; box-shadow:var(--shadow);">
+            <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:22px;">
+              <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">Official level</div><div style="font-size:19px; font-weight:600; color:var(--pri);">1 — Dedicated search index</div></div>
+              <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">Highest available</div><div style="font-size:19px; font-weight:600;">4</div></div>
+              <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">Experimental levels</div><div style="font-size:19px; font-weight:600; color:var(--acc);">2, 3, 4</div></div>
+              <div style="margin-left:auto; max-width:38ch; color:var(--ink2); font-size:12.5px; text-wrap:pretty;">Levels are cumulative. Level 3 includes 0, 1 and 2, so an identifier-aware search is also a fuzzy one. Everyone gets at least the official level; anything above it is experimental.</div>
+            </div>
+            <div style="display:flex; align-items:flex-start; padding:0 4px;">
+              <sc-for list="{{ lineMain }}" as="item" hint-placeholder-count="5">
+                <div style="display:flex; align-items:flex-start; flex:{{ item.flex }}; min-width:0;">
+                  <div style="display:flex; flex-direction:column; align-items:center; gap:8px; width:74px; flex:0 0 74px;">
+                    <div style="width:42px; height:42px; border-radius:50%; display:grid; place-items:center; font-size:15px; font-weight:600; background:{{ item.bg }}; color:{{ item.fg }}; border:{{ item.bd }};">{{ item.n }}</div>
+                    <div style="font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:{{ item.labC }}; text-align:center;">{{ item.lab }}</div>
+                    <div style="font-size:12px; font-family:'IBM Plex Mono',monospace; color:{{ item.subC }}; text-align:center;">{{ item.sub }}</div>
+                  </div>
+                  <div style="height:1px; margin-top:21px; flex:1; background:{{ item.conn }};"></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:14px; display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:var(--ink3);">
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; background:var(--pri);"></span>official — the minimum everyone gets</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; background:var(--pri-bg);"></span>included by cumulation</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; border:1px dashed var(--acc);"></span>experimental</span>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:2px; border-bottom:1px solid var(--border);">
+            <sc-for list="{{ tabs }}" as="item" hint-placeholder-count="5">
+              <div onClick="{{ item.go }}" style="padding:9px 14px; cursor:pointer; font-weight:600; color:{{ item.fg }}; border-bottom:2px solid {{ item.bar }}; margin-bottom:-1px;" style-hover="color:var(--ink);">{{ item.label }}</div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ tabLevels }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="color:var(--ink2);">Level numbers are immutable. Adding a level appends to the top of the line.</div>
+                <sc-if value="{{ canLevels }}" hint-placeholder-val="{{ true }}">
+                  <div onClick="{{ openAddLevel }}" style="margin-left:auto; padding:7px 12px; border-radius:6px; border:1px solid var(--border); background:var(--surface); font-weight:600; cursor:pointer;" style-hover="background:var(--surface2);">Add level 5</div>
+                </sc-if>
+              </div>
+              <sc-for list="{{ levels }}" as="item" hint-placeholder-count="5">
+                <div style="background:var(--surface); border:1px solid var(--border); border-left:3px solid {{ item.edge }}; border-radius:8px; padding:16px 18px; display:grid; grid-template-columns:64px minmax(0,1.4fr) minmax(210px,1fr); gap:20px;">
+                  <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                    <div style="width:40px; height:40px; border-radius:50%; display:grid; place-items:center; font-size:15px; font-weight:600; background:{{ item.bg }}; color:{{ item.fg }}; border:{{ item.bd }};">{{ item.n }}</div>
+                    <div style="font-size:10.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:{{ item.labC }};">{{ item.lab }}</div>
+                  </div>
+                  <div style="min-width:0;">
+                    <div style="font-weight:600; font-size:15px;">{{ item.title }}</div>
+                    <p style="margin:4px 0 10px; color:var(--ink2); text-wrap:pretty;">{{ item.desc }}</p>
+                    <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:4px;">Support description</div>
+                    <div style="background:var(--surface2); border:1px solid var(--border2); border-radius:6px; padding:10px 12px; color:var(--ink2); white-space:pre-line; text-wrap:pretty;">{{ item.support }}</div>
+                    <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                      <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:{{ item.perfBg }}; color:{{ item.perfC }};">{{ item.perf }}</span>
+                      <span style="font-size:12px; color:var(--ink3);">{{ item.meta }}</span>
+                    </div>
+                  </div>
+                  <div style="min-width:0;">
+                    <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:6px;">Fallback policy</div>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(92px,1fr)); gap:6px; opacity:{{ item.ctrlOpacity }};">
+                      <sc-for list="{{ item.policies }}" as="p" hint-placeholder-count="4">
+                        <div onClick="{{ p.go }}" title="{{ p.tip }}" style="min-width:0; text-align:center; padding:7px 6px; border-radius:6px; font-size:12px; font-weight:600; cursor:{{ p.cursor }}; background:{{ p.bg }}; color:{{ p.fg }}; border:1px solid {{ p.bd }};">{{ p.label }}</div>
+                      </sc-for>
+                    </div>
+                    <p style="margin:8px 0 0; color:var(--ink2); font-size:12.5px; text-wrap:pretty;">{{ item.policyNote }}</p>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabRollouts }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                <div style="color:var(--ink2); max-width:78ch; text-wrap:pretty;">Cohort growth is sticky. A subject included at 5 % stays included at 25 %, and shrinking a rollout does not remove subjects that are already assigned.</div>
+                <sc-if value="{{ canRollouts }}" hint-placeholder-val="{{ true }}">
+                  <div onClick="{{ openNewRollout }}" style="margin-left:auto; padding:7px 12px; border-radius:6px; border:1px solid var(--border); background:var(--surface); font-weight:600; cursor:pointer; white-space:nowrap;" style-hover="background:var(--surface2);">New rollout</div>
+                </sc-if>
+              </div>
+
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:18px 20px;">
+                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                  <div style="width:38px; height:38px; border-radius:50%; display:grid; place-items:center; font-weight:600; background:var(--surface); color:var(--acc); border:1px dashed var(--acc);">2</div>
+                  <div>
+                    <div style="font-weight:600; font-size:15px;">Level 2 — Fuzzy name matching</div>
+                    <div style="font-size:12px; color:var(--ink3);">Created 2026-08-28 · deterministic cohort by subject hash</div>
+                  </div>
+                  <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:var(--pri-bg); color:var(--pri);">Active</span>
+                  <div style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:26px; font-weight:500; letter-spacing:-.02em;">{{ pctLabel }}</div>
+                </div>
+
+                <div style="margin-top:18px; opacity:{{ rolloutOpacity }};">
+                  <input type="range" min="0" max="10000" step="25" value="{{ pct }}" onChange="{{ setPct }}" disabled="{{ rolloutDisabled }}" style="width:100%; accent-color:var(--pri);" />
+                  <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
+                    <sc-for list="{{ stops }}" as="item" hint-placeholder-count="6">
+                      <div onClick="{{ item.go }}" style="padding:5px 11px; border-radius:14px; font-size:12px; font-weight:600; cursor:{{ item.cursor }}; background:{{ item.bg }}; color:{{ item.fg }}; border:1px solid {{ item.bd }};">{{ item.label }}</div>
+                    </sc-for>
+                    <div style="margin-left:auto; font-size:12px; color:var(--ink3); font-family:'IBM Plex Mono',monospace;">{{ bp }} basis points</div>
+                  </div>
+                </div>
+
+                <div onClick="{{ toggleSkip }}" style="margin-top:16px; display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border:1px solid {{ skipBd }}; background:{{ skipBg }}; border-radius:6px; cursor:{{ ctrlCursor }};">
+                  <div style="width:16px; height:16px; border-radius:3px; border:1px solid {{ skipBoxBd }}; background:{{ skipBoxBg }}; color:var(--on-warn); display:grid; place-items:center; font-size:11px; font-weight:700; flex:0 0 16px; margin-top:2px;">{{ skipMark }}</div>
+                  <div>
+                    <div style="font-weight:600;">Allow skipping intermediate levels</div>
+                    <div style="color:{{ skipNoteC }}; text-wrap:pretty;">{{ skipNote }}</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                  <sc-for list="{{ rolloutActions }}" as="item" hint-placeholder-count="4">
+                    <div onClick="{{ item.go }}" title="{{ item.tip }}" style="padding:7px 12px; border-radius:6px; font-weight:600; cursor:{{ item.cursor }}; border:1px solid {{ item.bd }}; background:{{ item.bg }}; color:{{ item.fg }};">{{ item.label }}</div>
+                  </sc-for>
+                  <div style="margin-left:auto; font-size:12px; color:var(--ink3);">2 418 subjects in cohort · 6 assigned in the last hour</div>
+                </div>
+              </div>
+
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:18px 20px;">
+                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                  <div style="width:38px; height:38px; border-radius:50%; display:grid; place-items:center; font-weight:600; background:var(--surface); color:var(--acc); border:1px dashed var(--acc);">3</div>
+                  <div>
+                    <div style="font-weight:600; font-size:15px;">Level 3 — Identifier-aware ranking</div>
+                    <div style="font-size:12px; color:var(--ink3);">Paused 2026-09-15 14:02 by kfrancis · existing assignments remain</div>
+                  </div>
+                  <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:var(--warn-bg); color:var(--warn);">Paused</span>
+                  <div style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:26px; font-weight:500; color:var(--ink3);">5.00 %</div>
+                </div>
+                <div style="margin-top:14px; color:var(--ink2); text-wrap:pretty;">Cohort evaluation is stopped. Subjects already at level 3 keep identifier-aware ranking until they are reset or demoted.</div>
+                <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+                  <sc-for list="{{ rollout2Actions }}" as="item" hint-placeholder-count="3">
+                    <div onClick="{{ item.go }}" title="{{ item.tip }}" style="padding:7px 12px; border-radius:6px; font-weight:600; cursor:{{ item.cursor }}; border:1px solid {{ item.bd }}; background:{{ item.bg }}; color:{{ item.fg }};">{{ item.label }}</div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background:var(--surface); border:1px dashed var(--border); border-radius:8px; padding:28px 20px; text-align:center;">
+                <div style="font-weight:600; margin-bottom:4px;">Level 4 has no rollout</div>
+                <div style="color:var(--ink2);">Add a rollout to start moving subjects onto the write-through index cache, or promote it once level 3 has been at 100 % long enough.</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabAssignments }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <sc-for list="{{ subjTypes }}" as="item" hint-placeholder-count="5">
+                  <div onClick="{{ item.go }}" style="padding:6px 12px; border-radius:6px; font-size:12.5px; font-weight:600; cursor:pointer; background:{{ item.bg }}; color:{{ item.fg }}; border:1px solid {{ item.bd }};">{{ item.label }}</div>
+                </sc-for>
+                <input placeholder="Subject id contains…" style="margin-left:8px; padding:7px 10px; width:260px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--ink); font-family:'IBM Plex Mono',monospace; font-size:12.5px;" />
+              </div>
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; overflow-x:auto;">
+                <div style="min-width:1100px; display:grid; grid-template-columns:96px minmax(200px,1.6fr) 96px minmax(180px,1.4fr) 120px 130px 150px; gap:12px; padding:10px 16px; border-bottom:1px solid var(--border); background:var(--surface2); font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">
+                  <div>Type</div><div>Subject id</div><div>Level</div><div>Reason</div><div>Tenant</div><div>Last change</div><div>Actions</div>
+                </div>
+                <sc-for list="{{ assignments }}" as="item" hint-placeholder-count="6">
+                  <div style="min-width:1100px; display:grid; grid-template-columns:96px minmax(200px,1.6fr) 96px minmax(180px,1.4fr) 120px 130px 150px; gap:12px; padding:11px 16px; border-bottom:1px solid var(--border2); align-items:center;">
+                    <div><span style="padding:2px 7px; border-radius:4px; font-size:11.5px; font-weight:600; background:var(--surface2); border:1px solid var(--border); color:var(--ink2);">{{ item.type }}</span></div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ item.id }}</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span style="min-width:24px; height:24px; border-radius:12px; display:grid; place-items:center; font-size:12px; font-weight:600; background:{{ item.bg }}; color:{{ item.fg }}; border:{{ item.bd }};">{{ item.level }}</span>
+                      <span style="font-size:11px; color:var(--ink3);">{{ item.levelNote }}</span>
+                    </div>
+                    <div style="color:var(--ink2); min-width:0; text-wrap:pretty;">{{ item.reason }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink2);">{{ item.tenant }}</div>
+                    <div style="font-size:12.5px; color:var(--ink2);">{{ item.when }}</div>
+                    <div style="display:flex; gap:6px;">
+                      <span onClick="{{ item.override }}" title="{{ item.tip }}" style="padding:4px 9px; border-radius:5px; font-size:12px; font-weight:600; border:1px solid {{ item.actBd }}; color:{{ item.actC }}; cursor:{{ item.cursor }};">Override</span>
+                      <span onClick="{{ item.reset }}" title="{{ item.tip }}" style="padding:4px 9px; border-radius:5px; font-size:12px; font-weight:600; border:1px solid {{ item.actBd }}; color:{{ item.actC }}; cursor:{{ item.cursor }};">Reset</span>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="min-width:1100px; padding:11px 16px; display:flex; align-items:center; gap:12px; font-size:12px; color:var(--ink3);">
+                  <span>1–6 of 2 431</span>
+                  <div style="margin-left:auto; display:flex; gap:6px;">
+                    <span style="padding:4px 9px; border:1px solid var(--border); border-radius:5px;">Prev</span>
+                    <span style="padding:4px 9px; border:1px solid var(--border); border-radius:5px; background:var(--surface2);">Next</span>
+                  </div>
+                </div>
+              </div>
+              <div style="color:var(--ink2);">Assignments below the official level are harmless: they resolve to the official level and are shown as such, not as errors.</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabHistory }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:6px 20px 14px;">
+              <sc-for list="{{ trackHistory }}" as="item" hint-placeholder-count="6">
+                <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:14px; padding:16px 0; border-bottom:1px solid var(--border2);">
+                  <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                    <div style="width:12px; height:12px; border-radius:50%; margin-top:5px; background:{{ item.dot }};"></div>
+                    <div style="flex:1; width:1px; background:var(--border);"></div>
+                  </div>
+                  <div style="min-width:0;">
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                      <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:{{ item.typeBg }}; color:{{ item.typeC }};">{{ item.type }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace; font-weight:500;">{{ item.move }}</span>
+                      <span style="color:var(--ink2);">{{ item.subject }}</span>
+                      <span style="margin-left:auto; font-size:12px; color:var(--ink3);">{{ item.when }}</span>
+                    </div>
+                    <div style="margin-top:6px; color:var(--ink2); text-wrap:pretty;">{{ item.reason }}</div>
+                    <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                      <span onClick="{{ item.copy }}" title="Copy correlation id" style="padding:3px 8px; border-radius:4px; background:var(--surface2); border:1px solid var(--border); font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink2); cursor:pointer;" style-hover="border-color:var(--pri); color:var(--pri);">corr {{ item.corr }}</span>
+                      <span onClick="{{ item.copy }}" title="Copy trace id" style="padding:3px 8px; border-radius:4px; background:var(--surface2); border:1px solid var(--border); font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink2); cursor:pointer;" style-hover="border-color:var(--pri); color:var(--pri);">trace {{ item.trace }}</span>
+                      <span style="font-size:11.5px; color:var(--ink3);">tenant {{ item.tenant }}</span>
+                      <a href="#trace" style="font-size:12px; font-weight:600;">Open trace ↗</a>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="padding-top:14px; font-size:12px; color:var(--ink3);">{{ copyHint }}</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabDanger }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid {{ dangerBd }}; border-radius:8px; background:var(--surface); overflow:hidden;">
+              <div style="padding:14px 20px; background:{{ dangerBg }}; border-bottom:1px solid {{ dangerBd }}; font-weight:600; color:{{ dangerC }};">Danger zone</div>
+              <div style="padding:18px 20px; display:flex; gap:20px; align-items:center; border-bottom:1px solid var(--border2); flex-wrap:wrap;">
+                <div style="min-width:0; max-width:70ch;">
+                  <div style="font-weight:600;">Disable this track</div>
+                  <div style="color:var(--ink2); text-wrap:pretty;">Resolution stops honouring assignments and cohorts. Every subject drops to the official level until the track is enabled again.</div>
+                </div>
+                <div onClick="{{ openDisable }}" title="{{ manageTip }}" style="margin-left:auto; padding:8px 14px; border-radius:6px; font-weight:600; cursor:{{ ctrlCursor }}; border:1px solid {{ dangerBtnBd }}; color:{{ dangerBtnC }}; background:var(--surface);">Disable track</div>
+              </div>
+              <div style="padding:18px 20px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+                <div style="min-width:0; max-width:70ch;">
+                  <div style="font-weight:600;">Delete this track</div>
+                  <div style="color:var(--ink2); text-wrap:pretty;">Levels, rollouts and assignments are removed. Transition history is retained for audit.</div>
+                </div>
+                <div onClick="{{ openDelete }}" title="{{ manageTip }}" style="margin-left:auto; padding:8px 14px; border-radius:6px; font-weight:600; cursor:{{ ctrlCursor }}; border:1px solid {{ dangerBtnBd }}; background:{{ deleteBg }}; color:{{ deleteC }};">Delete track</div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInspect }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1080px; display:flex; flex-direction:column; gap:18px;">
+          <sc-if value="{{ viewOnly }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; gap:12px; align-items:flex-start; background:var(--acc-bg); border:1px solid var(--acc); border-radius:8px; padding:12px 14px;">
+              <div style="font-weight:700; color:var(--acc);">Annotated</div>
+              <div style="color:var(--ink2); text-wrap:pretty;">Support staff view: <span style="font-family:'IBM Plex Mono',monospace;">Assignments.View</span> without <span style="font-family:'IBM Plex Mono',monospace;">Assignments.Override</span>. Everything below is readable; “Override level…” and “Reset to official” render disabled with a tooltip naming the missing permission.</div>
+            </div>
+          </sc-if>
+          <div>
+            <h1 style="margin:0 0 4px; font-size:22px; font-weight:600; letter-spacing:-.015em;">Subject inspection</h1>
+            <p style="margin:0; color:var(--ink2); max-width:70ch; text-wrap:pretty;">Look up what one user, tenant or client is actually running right now, and why their search behaves differently from the official behaviour.</p>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px 18px; display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+            <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:5px;">Subject type</div>
+              <div style="display:flex; border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+                <sc-for list="{{ inspectTypes }}" as="item" hint-placeholder-count="4">
+                  <div onClick="{{ item.go }}" style="padding:7px 12px; font-size:12.5px; font-weight:600; cursor:pointer; background:{{ item.bg }}; color:{{ item.fg }}; border-right:1px solid var(--border);">{{ item.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="flex:1; min-width:240px;"><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:5px;">Subject id</div>
+              <input value="11111111-1111-1111-1111-111111111111" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--ink); font-family:'IBM Plex Mono',monospace; font-size:12.5px;" />
+            </div>
+            <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:5px;">Tenant</div>
+              <div style="display:flex; align-items:center; gap:8px; padding:7px 10px; border:1px solid var(--border); border-radius:6px; min-width:150px;"><span style="font-weight:600;">{{ tenant }}</span><span style="font-size:11px; color:var(--ink3);">host user</span></div>
+            </div>
+            <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:5px;">Track</div>
+              <div style="padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;">Cab.Patients.Search ▾</div>
+            </div>
+            <div style="padding:8px 16px; border-radius:6px; background:var(--pri); color:var(--on-pri); font-weight:600; cursor:pointer;" style-hover="opacity:.9;">Inspect</div>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow); overflow:hidden;">
+            <div style="padding:18px 20px; border-bottom:1px solid var(--border);">
+              <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                <div style="font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:15px;">User 11111111-1111-1111-1111-111111111111</div>
+                <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:var(--acc-bg); color:var(--acc);">Experimental</span>
+                <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:var(--warn-bg); color:var(--warn);">Capped by constraint</span>
+                <div style="margin-left:auto; display:flex; gap:8px;">
+                  <div onClick="{{ openOverride }}" title="{{ overrideTip }}" style="padding:8px 13px; border-radius:6px; font-weight:600; cursor:{{ ovCursor }}; border:1px solid {{ ovBd }}; background:{{ ovBg }}; color:{{ ovC }};">Override level…</div>
+                  <div onClick="{{ openReset }}" title="{{ overrideTip }}" style="padding:8px 13px; border-radius:6px; font-weight:600; cursor:{{ ovCursor }}; border:1px solid {{ ovBd2 }}; background:var(--surface); color:{{ ovC2 }};">Reset to official</div>
+                </div>
+              </div>
+              <div style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px;">
+                <sc-for list="{{ resolution }}" as="item" hint-placeholder-count="4">
+                  <div style="border:1px solid var(--border); border-radius:8px; padding:12px 14px; background:{{ item.cardBg }};">
+                    <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">{{ item.label }}</div>
+                    <div style="font-size:26px; font-weight:600; letter-spacing:-.02em; color:{{ item.color }};">{{ item.value }}</div>
+                    <div style="font-size:12px; color:var(--ink3); text-wrap:pretty;">{{ item.note }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="padding:20px; border-bottom:1px solid var(--border);">
+              <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:14px;">Where this subject sits on the line</div>
+              <div style="display:flex; align-items:flex-start;">
+                <sc-for list="{{ lineInspect }}" as="item" hint-placeholder-count="5">
+                  <div style="display:flex; align-items:flex-start; flex:{{ item.flex }}; min-width:0;">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:7px; width:72px; flex:0 0 72px;">
+                      <div style="width:38px; height:38px; border-radius:50%; display:grid; place-items:center; font-weight:600; background:{{ item.bg }}; color:{{ item.fg }}; border:{{ item.bd }};">{{ item.n }}</div>
+                      <div style="font-size:10.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:{{ item.labC }}; text-align:center;">{{ item.lab }}</div>
+                      <div style="font-size:11.5px; font-family:'IBM Plex Mono',monospace; color:{{ item.subC }}; text-align:center;">{{ item.sub }}</div>
+                    </div>
+                    <div style="height:1px; margin-top:19px; flex:1; background:{{ item.conn }};"></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="padding:20px; border-bottom:1px solid var(--border);">
+              <div style="font-weight:600; margin-bottom:4px;">What this subject does differently</div>
+              <div style="color:var(--ink2); margin-bottom:12px;">Every level above official 1 up to the effective level 2.</div>
+              <sc-for list="{{ differences }}" as="item" hint-placeholder-count="1">
+                <div style="display:grid; grid-template-columns:36px minmax(0,1fr); gap:14px; padding:14px; border:1px solid var(--acc); border-radius:8px; background:var(--acc-bg); margin-bottom:10px;">
+                  <div style="width:32px; height:32px; border-radius:50%; display:grid; place-items:center; font-weight:600; background:var(--surface); color:var(--acc); border:1px dashed var(--acc);">{{ item.n }}</div>
+                  <div><div style="font-weight:600;">{{ item.title }}</div><div style="color:var(--ink2); white-space:pre-line; text-wrap:pretty; margin-top:4px;">{{ item.support }}</div></div>
+                </div>
+              </sc-for>
+              <div style="color:var(--ink3); font-size:12.5px;">Level 3 — identifier-aware ranking — was requested by an assignment but is not in effect; see constraints below.</div>
+            </div>
+
+            <div style="padding:20px;">
+              <div style="font-weight:600; margin-bottom:12px;">Constraints applied</div>
+              <sc-for list="{{ constraints }}" as="item" hint-placeholder-count="2">
+                <div style="display:flex; gap:14px; align-items:flex-start; padding:13px 14px; border:1px solid {{ item.bd }}; border-radius:8px; background:{{ item.bg }}; margin-bottom:10px;">
+                  <span style="padding:3px 8px; border-radius:4px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:500; background:var(--surface); border:1px solid {{ item.bd }}; color:{{ item.c }}; white-space:nowrap;">{{ item.source }}</span>
+                  <div style="min-width:0;"><div style="font-weight:600; color:{{ item.c }};">{{ item.effect }}</div><div style="color:var(--ink2); text-wrap:pretty;">{{ item.reason }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div>
+            <h1 style="margin:0 0 4px; font-size:22px; font-weight:600;">Inspection — compact layout</h1>
+            <p style="margin:0; color:var(--ink2); max-width:70ch;">The only screen with a mobile layout. Support staff read the resolution and the differences; mutating actions stay behind the same permission check.</p>
+          </div>
+          <div style="width:390px; border:1px solid var(--border); border-radius:14px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow);">
+            <div style="padding:12px 16px; background:var(--side-bg); color:var(--side-ink); display:flex; align-items:center; gap:10px;">
+              <span style="font-size:18px;">‹</span><span style="font-weight:600;">Inspect subject</span>
+              <span style="margin-left:auto; font-size:11px; color:var(--side-ink2); font-family:'IBM Plex Mono',monospace;">{{ tenant }}</span>
+            </div>
+            <div style="padding:14px; display:flex; flex-direction:column; gap:12px;">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px;">
+                <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">Subject</div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; word-break:break-all;">User 11111111-1111-1111-1111-111111111111</div>
+                <div style="margin-top:8px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;">Cab.Patients.Search</div>
+              </div>
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px; text-align:center;">
+                <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">Effective level</div>
+                <div style="font-size:44px; font-weight:600; letter-spacing:-.03em; color:var(--acc); line-height:1.1;">2</div>
+                <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:6px;">
+                  <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:var(--acc-bg); color:var(--acc);">Experimental</span>
+                  <span style="padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600; background:var(--warn-bg); color:var(--warn);">Capped from 3</span>
+                </div>
+                <div style="display:flex; justify-content:center; gap:10px; margin-top:12px;">
+                  <sc-for list="{{ lineMobile }}" as="item" hint-placeholder-count="5">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                      <div style="width:36px; height:36px; border-radius:50%; display:grid; place-items:center; font-weight:600; background:{{ item.bg }}; color:{{ item.fg }}; border:{{ item.bd }};">{{ item.n }}</div>
+                      <div style="font-size:9.5px; font-weight:600; letter-spacing:.03em; text-transform:uppercase; color:{{ item.labC }};">{{ item.lab }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px;">
+                <div style="font-weight:600; margin-bottom:8px;">Differs from official</div>
+                <div style="border-left:3px solid var(--acc); padding-left:10px;">
+                  <div style="font-weight:600;">Level 2 — Fuzzy name matching</div>
+                  <div style="color:var(--ink2); margin-top:3px; text-wrap:pretty;">Misspelled and phonetically similar names match, and results are ordered by how well they match rather than alphabetically.</div>
+                </div>
+              </div>
+              <div style="background:var(--warn-bg); border:1px solid var(--warn); border-radius:8px; padding:12px;">
+                <div style="font-weight:600; color:var(--warn);">client-capability lowered 3 → 2</div>
+                <div style="color:var(--ink2); margin-top:3px; text-wrap:pretty;">Header <span style="font-family:'IBM Plex Mono',monospace;">X-Cab-Capability: 2</span> from cab-mobile 4.2. Upgrading the app restores identifier-aware ranking.</div>
+              </div>
+              <div onClick="{{ openOverride }}" title="{{ overrideTip }}" style="padding:13px; border-radius:8px; text-align:center; font-weight:600; min-height:44px; box-sizing:border-box; cursor:{{ ovCursor }}; border:1px solid {{ ovBd }}; background:{{ ovBg }}; color:{{ ovC }};">Override level…</div>
+              <div onClick="{{ openReset }}" title="{{ overrideTip }}" style="padding:13px; border-radius:8px; text-align:center; font-weight:600; min-height:44px; box-sizing:border-box; cursor:{{ ovCursor }}; border:1px solid {{ ovBd2 }}; background:var(--surface); color:{{ ovC2 }};">Reset to official</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1280px; display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <h1 style="margin:0 0 4px; font-size:22px; font-weight:600; letter-spacing:-.015em;">Transition history</h1>
+            <p style="margin:0; color:var(--ink2); max-width:74ch; text-wrap:pretty;">Durable state changes across all tracks. Automatic demotions are incidents: a route failed at a level and the subject was moved down.</p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <sc-for list="{{ histFilters }}" as="item" hint-placeholder-count="5">
+              <div onClick="{{ item.go }}" style="padding:6px 12px; border-radius:6px; font-size:12.5px; font-weight:600; cursor:pointer; background:{{ item.bg }}; color:{{ item.fg }}; border:1px solid {{ item.bd }};">{{ item.label }}</div>
+            </sc-for>
+            <input placeholder="Track or subject id" style="margin-left:8px; padding:7px 10px; width:240px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--ink); font-size:12.5px; font-family:'IBM Plex Mono',monospace;" />
+            <div style="padding:7px 10px; border:1px solid var(--border); border-radius:6px; background:var(--surface); font-size:12.5px;">Last 7 days ▾</div>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; overflow-x:auto;">
+            <div style="min-width:1100px; display:grid; grid-template-columns:minmax(160px,1.2fr) 150px 84px minmax(160px,1.2fr) minmax(200px,1.6fr) 120px 96px; gap:12px; padding:10px 16px; border-bottom:1px solid var(--border); background:var(--surface2); font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">
+              <div>Track</div><div>Type</div><div>From → to</div><div>Subject</div><div>Reason</div><div>When</div><div>Trace</div>
+            </div>
+            <sc-for list="{{ globalHistory }}" as="item" hint-placeholder-count="8">
+              <div style="min-width:1100px; display:grid; grid-template-columns:minmax(160px,1.2fr) 150px 84px minmax(160px,1.2fr) minmax(200px,1.6fr) 120px 96px; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border2); align-items:center; background:{{ item.rowBg }}; border-left:3px solid {{ item.edge }};">
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; overflow:hidden; text-overflow:ellipsis;">{{ item.track }}</div>
+                <div><span style="padding:3px 8px; border-radius:4px; font-size:11.5px; font-weight:600; background:{{ item.typeBg }}; color:{{ item.typeC }}; white-space:nowrap;">{{ item.type }}</span></div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-weight:500;">{{ item.move }}</div>
+                <div style="font-size:12.5px; color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ item.subject }}</div>
+                <div style="color:var(--ink2); min-width:0; text-wrap:pretty;">{{ item.reason }}</div>
+                <div style="font-size:12.5px; color:var(--ink3);">{{ item.when }}</div>
+                <div><a href="#trace" style="font-size:12px; font-weight:600;">Open ↗</a></div>
+              </div>
+            </sc-for>
+            <div style="min-width:1100px; padding:11px 16px; font-size:12px; color:var(--ink3); display:flex; gap:12px;">
+              <span>{{ histCount }}</span>
+              <span style="margin-left:auto;">{{ copyHint }}</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeModal }}" style="position:fixed; inset:0; background:rgba(8,16,18,.52); display:flex; align-items:flex-start; justify-content:center; padding:72px 20px; z-index:30; overflow:auto;">
+      <div onClick="{{ stop }}" style="width:100%; max-width:{{ modalW }}; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:0 24px 60px rgba(0,0,0,.35); overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+          <div style="font-size:16px; font-weight:600;">{{ modalTitle }}</div>
+          <span style="padding:3px 8px; border-radius:4px; font-size:11.5px; font-weight:600; background:{{ modalTagBg }}; color:{{ modalTagC }};">{{ modalTag }}</span>
+          <div onClick="{{ closeModal }}" style="margin-left:auto; cursor:pointer; color:var(--ink3); font-size:18px; line-height:1;">×</div>
+        </div>
+
+        <div style="padding:20px;">
+          <sc-if value="{{ isOverrideModal }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; flex-direction:column; gap:18px;">
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px;">
+                <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">Track</div><div style="font-family:'IBM Plex Mono',monospace; font-weight:500;">Cab.Patients.Search</div></div>
+                <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">Subject</div><div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; word-break:break-all;">User 11111111-1111-…-111111111111</div></div>
+                <div><div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3);">Tenant</div><div style="font-weight:500;">{{ tenant }}</div></div>
+              </div>
+              <div>
+                <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:12px;">Target level</div>
+                <div style="display:flex; align-items:flex-start;">
+                  <sc-for list="{{ lineOverride }}" as="item" hint-placeholder-count="5">
+                    <div style="display:flex; align-items:flex-start; flex:{{ item.flex }}; min-width:0;">
+                      <div onClick="{{ item.go }}" style="display:flex; flex-direction:column; align-items:center; gap:7px; width:72px; flex:0 0 72px; cursor:pointer;">
+                        <div style="width:40px; height:40px; border-radius:50%; display:grid; place-items:center; font-weight:600; background:{{ item.bg }}; color:{{ item.fg }}; border:{{ item.bd }};">{{ item.n }}</div>
+                        <div style="font-size:10.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:{{ item.labC }}; text-align:center;">{{ item.lab }}</div>
+                        <div style="font-size:11.5px; color:{{ item.subC }}; text-align:center;">{{ item.sub }}</div>
+                      </div>
+                      <div style="height:1px; margin-top:20px; flex:1; background:{{ item.conn }};"></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:5px;">Reason <span style="color:var(--dgr);">required</span></div>
+                <input value="{{ reason }}" onChange="{{ setReason }}" placeholder="e.g. Support request #4471 — clinic reports a patient they cannot find" style="width:100%; box-sizing:border-box; padding:9px 11px; border:1px solid {{ reasonBd }}; border-radius:6px; background:var(--surface); color:var(--ink); font-family:inherit; font-size:13px;" />
+                <div style="font-size:12px; color:{{ reasonNoteC }}; margin-top:4px;">{{ reasonNote }}</div>
+              </div>
+              <div onClick="{{ toggleEmergency }}" style="display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border:1px solid {{ emBd }}; background:{{ emBg }}; border-radius:6px; cursor:pointer;">
+                <div style="width:16px; height:16px; border-radius:3px; border:1px solid {{ emBoxBd }}; background:{{ emBoxBg }}; color:var(--on-dgr); display:grid; place-items:center; font-size:11px; font-weight:700; flex:0 0 16px; margin-top:2px;">{{ emMark }}</div>
+                <div><div style="font-weight:600; color:{{ emC }};">Emergency override</div><div style="color:var(--ink2); text-wrap:pretty;">{{ emNote }}</div></div>
+              </div>
+              <div style="border:1px solid var(--border); border-radius:8px; background:var(--surface2); padding:14px 16px;">
+                <div style="font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3); margin-bottom:6px;">After this change the subject runs</div>
+                <div style="font-weight:600; font-size:15px; color:{{ summaryC }};">{{ summaryLine }}</div>
+                <div style="color:var(--ink2); margin-top:4px; text-wrap:pretty;">{{ summaryNote }}</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isConfirmModal }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              <div style="color:var(--ink); font-size:14.5px; text-wrap:pretty;">{{ confirmLead }}</div>
+              <div style="border:1px solid {{ confirmBd }}; background:{{ confirmBg }}; border-radius:8px; padding:14px 16px; color:var(--ink2); text-wrap:pretty;">{{ confirmDetail }}</div>
+              <sc-if value="{{ confirmHasLine }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; align-items:flex-start; padding-top:4px;">
+                  <sc-for list="{{ linePromote }}" as="item" hint-placeholder-count="5">
+                    <div style="display:flex; align-items:flex-start; flex:{{ item.flex }}; min-width:0;">
+                      <div style="display:flex; flex-direction:column; align-items:center; gap:7px; width:72px; flex:0 0 72px;">
+                        <div style="width:38px; height:38px; border-radius:50%; display:grid; place-items:center; font-weight:600; background:{{ item.bg }}; color:{{ item.fg }}; border:{{ item.bd }};">{{ item.n }}</div>
+                        <div style="font-size:10.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:{{ item.labC }}; text-align:center;">{{ item.lab }}</div>
+                      </div>
+                      <div style="height:1px; margin-top:19px; flex:1; background:{{ item.conn }};"></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="padding:14px 20px; border-top:1px solid var(--border); background:var(--surface2); display:flex; gap:10px; align-items:center;">
+          <div style="font-size:12px; color:var(--ink3); max-width:52ch; text-wrap:pretty;">{{ modalFootNote }}</div>
+          <div style="margin-left:auto; display:flex; gap:8px;">
+            <div onClick="{{ closeModal }}" style="padding:8px 14px; border-radius:6px; border:1px solid var(--border); background:var(--surface); font-weight:600; cursor:pointer;" style-hover="background:var(--bg);">Cancel</div>
+            <div onClick="{{ closeModal }}" style="padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer; background:{{ confirmBtnBg }}; color:{{ confirmBtnC }}; border:1px solid {{ confirmBtnBg }};" style-hover="opacity:.9;">{{ confirmBtn }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:960}}">
+const POLICIES = [
+  { k: 'None', tip: 'No automatic behaviour. The exception surfaces to the caller unchanged.' },
+  { k: 'DemoteOnly', tip: 'Demotes the subject for future requests; nothing is re-executed now.' },
+  { k: 'SafeRead', tip: 'Read-only route. Failure demotes and immediately retries the next lower level.' },
+  { k: 'Idempotent', tip: 'Idempotent or transactional write. Failure demotes and retries the next lower level.' }
+];
+
+const POLICY_NOTE = {
+  None: 'Safe default for writes. Nothing is retried, so a half-finished write cannot happen twice.',
+  DemoteOnly: 'No retry in this request, but the subject drops a level for the next one. Use for non-idempotent writes.',
+  SafeRead: 'Automatic retry of the lower level is allowed because the route only reads.',
+  Idempotent: 'Automatic retry is allowed because the route persists nothing when it throws.'
+};
+
+const LEVELS = [
+  { n: 0, title: 'Original implementation', desc: 'Direct LIKE query against the patient table on surname, given name and date of birth.', support: 'Search only matches names spelled exactly as they are recorded.\nResults come back in alphabetical order, not by relevance.', policy: 'None', perf: false, meta: 'Created 2026-05-04 · immutable' },
+  { n: 1, title: 'Dedicated search index', desc: 'Queries the purpose-built patient index instead of the transactional database.', support: 'Search returns faster and no longer slows down when the system is busy.\nMatching still requires the name to be spelled as recorded.\nA patient registered in the last few seconds can take a moment to appear.', policy: 'None', perf: false, meta: 'Official since 2026-09-09' },
+  { n: 2, title: 'Fuzzy name matching', desc: 'Phonetic and typo-tolerant matching over the index, results ranked by match score.', support: 'Misspelled and phonetically similar names now match — “Tomsen” finds “Thompson”.\nResults are ordered by how well they match, so the closest patient is first rather than the alphabetically first.\nMore results are returned than before; the count at the top of the list will look higher.', policy: 'SafeRead', perf: false, meta: 'Rollout active at 25.00 %' },
+  { n: 3, title: 'Identifier-aware ranking', desc: 'Health card, MRN and phone number are looked up in parallel with the name query and merged into one ranked list.', support: 'A health card or chart number pasted into the search box finds the patient directly, and that exact match is pinned to the top.\nRequires a client that reports capability 3 or higher.', policy: 'Idempotent', perf: true, meta: 'Rollout paused at 5.00 %' },
+  { n: 4, title: 'Write-through index cache', desc: 'Newly registered and recently viewed patients are written through the index cache on load.', support: 'A patient registered moments ago appears in search straight away.\nNo other visible change to results or ordering.', policy: 'None', perf: true, meta: 'No rollout yet' }
+];
+
+const TRACKS = [
+  { name: 'Cab.Patients.Search', display: 'Patient search engine', official: 1, highest: 4, enabled: true, rollouts: 'L2 → 25.00 %', extra: 'L3 → 5.00 % paused', dem: '3', demBad: true, last: 'AutomaticDemotion', lastWhen: '40 minutes ago', lastBad: true },
+  { name: 'Cab.Patients.Duplicates', display: 'Duplicate patient detection', official: 0, highest: 2, enabled: true, rollouts: 'L1 → 50.00 %', dem: '0', last: 'AutomaticPromotion', lastWhen: '6 hours ago' },
+  { name: 'Cab.Billing.Statements', display: 'Statement generation', official: 2, highest: 2, enabled: true, rollouts: '—', dem: '0', last: 'OfficialLevelChanged', lastWhen: '3 days ago' },
+  { name: 'Cab.Documents.Ocr', display: 'Document OCR extraction', official: 0, highest: 3, enabled: true, rollouts: 'L1 → 1.00 %', dem: '11', demBad: true, last: 'AutomaticDemotion', lastWhen: '2 hours ago', lastBad: true },
+  { name: 'Cab.Portal.Upload', display: 'Portal upload widget', official: 0, highest: 1, enabled: false, rollouts: '—', dem: 'n/a', last: 'OfficialLevelChanged', lastWhen: '12 days ago' },
+  { name: 'Cab.Scheduling.Slots', display: 'Slot availability engine', official: 3, highest: 3, enabled: true, rollouts: '—', dem: 'n/a', last: 'Promotion', lastWhen: '8 days ago' }
+];
+
+const ASSIGNMENTS = [
+  { type: 'User', id: '11111111-1111-1111-1111-111111111111', level: 3, kind: 'exp', reason: 'Pilot user — search relevance', tenant: 'northwind', when: '2026-09-14 09:12' },
+  { type: 'User', id: '7c2a1f48-9b30-4d21-8e4b-2f0c9a771d55', level: 2, kind: 'exp', reason: 'Rollout cohort L2 @ 25.00 %', tenant: 'northwind', when: '2026-09-15 22:41' },
+  { type: 'Tenant', id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', level: 2, kind: 'exp', reason: 'Design partner — opted in', tenant: 'northwind', when: '2026-09-02 11:20' },
+  { type: 'Client', id: 'cab-mobile', level: 0, kind: 'below', reason: 'Legacy client pinned to the original LIKE query', tenant: '—', when: '2026-06-18 16:05' },
+  { type: 'User', id: '22222222-2222-2222-2222-222222222222', level: 1, kind: 'official', reason: 'Automatic demotion after route failure at level 3', tenant: 'northwind', when: '2026-09-16 00:03' },
+  { type: 'Anonymous', id: '*', level: 0, kind: 'below', reason: 'Anonymous traffic kept on original implementation', tenant: '—', when: '2026-05-04 08:00' }
+];
+
+const TYPE_TONE = {
+  Promotion: 'pri', AutomaticPromotion: 'pri', ManualOverride: 'acc',
+  AutomaticDemotion: 'warn', OfficialLevelChanged: 'pri', AdministrativeReset: 'ink', EmergencyOverride: 'dgr'
+};
+
+const TRACK_HISTORY = [
+  { type: 'AutomaticDemotion', move: 'L3 → L2', subject: 'User 2222…2222', reason: 'Identifier lookup at level 3 threw TimeoutException after 30 s. Policy Idempotent allowed an immediate retry of level 2.', when: '40 minutes ago', corr: '9f31c8a4', trace: '4bf92f35…c0', tenant: 'northwind' },
+  { type: 'AutomaticPromotion', move: 'L1 → L2', subject: 'User 7c2a…1d55', reason: 'Included in rollout cohort for level 2 at 25.00 %.', when: '2 hours ago', corr: 'b17e0d52', trace: '8a3d11ff…71', tenant: 'northwind' },
+  { type: 'ManualOverride', move: 'L2 → L3', subject: 'User 1111…1111', reason: 'Pilot user — search relevance. Requested by product.', when: '2 days ago', corr: 'c904ab7e', trace: '2ee7c930…14', tenant: 'northwind' },
+  { type: 'OfficialLevelChanged', move: 'L0 → L1', subject: 'Track', reason: 'Level 1 held 100.00 % for 30 days with no demotions; promoted to official.', when: '6 days ago', corr: '5d2f77b1', trace: '—', tenant: 'host' },
+  { type: 'EmergencyOverride', move: 'L3 → L1', subject: 'Tenant aaaa…aaaa', reason: 'Incident INC-2291 — patient search returning empty result sets on the tenant portal.', when: '12 days ago', corr: 'e81a4400', trace: 'f01b7a22…9d', tenant: 'northwind' },
+  { type: 'AdministrativeReset', move: 'L2 → —', subject: 'User 9f14…6b02', reason: 'Support request #4471 — clinic asked to go back to alphabetical results.', when: '15 days ago', corr: '31c7de08', trace: '—', tenant: 'northwind' }
+];
+
+const GLOBAL_HISTORY = [
+  { track: 'Cab.Documents.Ocr', type: 'AutomaticDemotion', move: 'L1 → L0', subject: 'User 4a71…8c30', reason: 'OCR extraction threw at level 1; SafeRead retried level 0.', when: '12 min ago' },
+  { track: 'Cab.Patients.Search', type: 'AutomaticDemotion', move: 'L3 → L2', subject: 'User 2222…2222', reason: 'Identifier lookup timed out after 30 s at level 3.', when: '40 min ago' },
+  { track: 'Cab.Patients.Search', type: 'AutomaticPromotion', move: 'L1 → L2', subject: 'User 7c2a…1d55', reason: 'Rollout cohort L2 @ 25.00 %.', when: '2 h ago' },
+  { track: 'Cab.Patients.Duplicates', type: 'AutomaticPromotion', move: 'L0 → L1', subject: 'Tenant bbbb…bbbb', reason: 'Rollout cohort L1 @ 50.00 %.', when: '6 h ago' },
+  { track: 'Cab.Documents.Ocr', type: 'AutomaticDemotion', move: 'L1 → L0', subject: 'User 6d09…f412', reason: 'OCR extraction threw at level 1; SafeRead retried level 0.', when: '9 h ago' },
+  { track: 'Cab.Patients.Search', type: 'ManualOverride', move: 'L2 → L3', subject: 'User 1111…1111', reason: 'Pilot user — search relevance.', when: '2 d ago' },
+  { track: 'Cab.Billing.Statements', type: 'OfficialLevelChanged', move: 'L1 → L2', subject: 'Track', reason: 'Level 2 promoted after 14 days at 100.00 %.', when: '3 d ago' },
+  { track: 'Cab.Scheduling.Slots', type: 'EmergencyOverride', move: 'L3 → L0', subject: 'Tenant aaaa…aaaa', reason: 'Incident INC-2288 — slot engine returning empty availability.', when: '5 d ago' }
+];
+
+class Component extends DCLogic {
+  state = {
+    theme: 'light', screen: 'tracks', tab: 'levels', modal: null, tenantIdx: 0,
+    q: '', bp: 2500, skip: false, reason: '', emergency: false, ovLevel: 2,
+    subjType: 'All', inspectType: 'User', histFilter: 'All', policies: {}, copied: ''
+  };
+
+  set(k, v) { this.setState({ [k]: v }); }
+  go(screen) { this.setState({ screen: screen, modal: null }); }
+
+  tone(t) {
+    const m = {
+      pri: ['var(--pri)', 'var(--pri-bg)'], acc: ['var(--acc)', 'var(--acc-bg)'],
+      warn: ['var(--warn)', 'var(--warn-bg)'], dgr: ['var(--dgr)', 'var(--dgr-bg)'],
+      ink: ['var(--ink2)', 'var(--surface2)']
+    };
+    return m[t] || m.ink;
+  }
+
+  node(n, o) {
+    const official = o.official, exp = n > official;
+    let bg = 'var(--pri-bg)', fg = 'var(--pri)', bd = '1px solid transparent';
+    if (n === official) { bg = 'var(--pri)'; fg = 'var(--on-pri)'; bd = '1px solid var(--pri)'; }
+    else if (exp) { bg = 'var(--surface)'; fg = 'var(--acc)'; bd = '1px dashed var(--acc)'; }
+    if (o.capAt != null && n > o.capAt) { bg = 'var(--surface)'; fg = 'var(--ink3)'; bd = '1px dashed var(--border)'; }
+    if (o.selected === n) { bg = 'var(--acc-bg)'; fg = 'var(--acc)'; bd = '2px solid var(--acc)'; }
+    return { bg: bg, fg: fg, bd: bd };
+  }
+
+  line(o) {
+    const out = [];
+    for (let n = 0; n <= o.highest; n++) {
+      const st = this.node(n, o);
+      let lab = '', labC = 'var(--ink3)', sub = '', subC = 'var(--ink3)';
+      if (n === o.official) { lab = 'official'; labC = 'var(--pri)'; }
+      else if (n > o.official) { lab = 'experimental'; labC = 'var(--acc)'; }
+      else { lab = 'included'; labC = 'var(--ink3)'; }
+      if (o.rollouts && o.rollouts[n]) { sub = o.rollouts[n]; subC = 'var(--acc)'; }
+      if (o.effective === n) { lab = 'effective'; labC = 'var(--acc)'; }
+      if (o.capAt != null && n > o.capAt) { lab = 'capped'; labC = 'var(--warn)'; sub = ''; }
+      if (o.selected === n) { lab = 'selected'; labC = 'var(--acc)'; }
+      if (o.assigned === n && o.effective !== n) { sub = 'assigned'; subC = 'var(--ink3)'; }
+      out.push(Object.assign(st, {
+        n: n, lab: lab, labC: labC, sub: sub, subC: subC,
+        flex: n === o.highest ? '0 0 auto' : '1 1 auto',
+        conn: n === o.highest ? 'transparent' : 'var(--border)',
+        go: o.pick ? () => this.set('ovLevel', n) : null
+      }));
+    }
+    return out;
+  }
+
+  navItem(id, label, meta, metaTone) {
+    const active = this.state.screen === id;
+    return {
+      label: label, meta: meta || '', metaC: metaTone ? this.tone(metaTone)[0] : 'var(--side-ink2)',
+      bg: active ? '#ffffff14' : 'transparent',
+      fg: active ? 'var(--side-ink)' : '#c3d4d4',
+      bar: active ? 'var(--pri)' : 'transparent',
+      go: () => this.go(id)
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const tenants = ['northwind', 'acme-health', 'host'];
+    const tenant = tenants[s.tenantIdx % 3];
+    const viewOnly = s.screen === 'support-track' || s.screen === 'support-inspect';
+    const canManage = !viewOnly;
+    const isTrack = s.screen === 'track' || s.screen === 'support-track';
+    const isInspect = s.screen === 'inspect' || s.screen === 'support-inspect';
+    const pctLabel = (s.bp / 100).toFixed(2) + ' %';
+    const modal = s.modal;
+    const tabKey = viewOnly && s.tab === 'danger' ? 'levels' : s.tab;
+    const manageTip = viewOnly ? 'Requires ProgressiveDelivery.Tracks.Manage' : '';
+    const ctrlCursor = viewOnly ? 'not-allowed' : 'pointer';
+
+    const crumbs = {
+      tracks: 'Feature tracks', track: 'Cab.Patients.Search', inspect: 'Subject inspection',
+      history: 'Transition history', mobile: 'Subject inspection · mobile',
+      'support-track': 'Cab.Patients.Search · support view', 'support-inspect': 'Subject inspection · support view'
+    };
+
+    const confirms = {
+      promote: {
+        title: 'Promote level 2 to official', tag: 'State change', tagTone: 'pri', w: '640px',
+        lead: 'Level 2 becomes the minimum every subject on Cab.Patients.Search receives.',
+        detail: 'Assignments are not modified; anything below 2 resolves to 2. The level 2 rollout completes, subjects already above 2 stay where they are, and one OfficialLevelChanged transition is recorded.',
+        btn: 'Promote to official', tone: 'pri', line: true,
+        foot: 'Recorded as OfficialLevelChanged with your user id and reason.'
+      },
+      disable: {
+        title: 'Disable Cab.Patients.Search', tag: 'Destructive', tagTone: 'warn', w: '560px',
+        lead: 'Every subject on this track drops to the official level 1 — the dedicated search index — until it is enabled again.',
+        detail: 'Assignments, rollouts and cohorts are kept but ignored during resolution. Re-enabling restores them unchanged.',
+        btn: 'Disable track', tone: 'warn', foot: 'Takes effect within the track definition cache window (1 hour maximum, invalidated immediately on change).'
+      },
+      del: {
+        title: 'Delete Cab.Patients.Search', tag: 'Irreversible', tagTone: 'dgr', w: '560px',
+        lead: 'This removes the track, its 5 levels, 2 rollouts and 2 431 assignments.',
+        detail: 'Transition history is retained for audit. Callers resolving this track fall back to level 0 — the original LIKE query — per UnknownTrackBehavior.UseLevelZero.',
+        btn: 'Delete track', tone: 'dgr', foot: 'Type-to-confirm is enforced by the API; this dialog is the last step in the UI.'
+      },
+      suspend: {
+        title: 'Suspend rollout L2 @ 25.00 %', tag: 'State change', tagTone: 'warn', w: '560px',
+        lead: 'Cohort evaluation stops and the rollout is marked Suspended.',
+        detail: 'Subjects already assigned to level 2 stay at level 2. Suspending does not demote anyone; use an override or a reset for that.',
+        btn: 'Suspend rollout', tone: 'warn', foot: 'Suspended rollouts do not resume automatically.'
+      },
+      remove: {
+        title: 'Remove rollout L3 @ 5.00 %', tag: 'Destructive', tagTone: 'dgr', w: '560px',
+        lead: 'The rollout is deleted and no further subjects are added to the level 3 cohort.',
+        detail: 'The 118 subjects already assigned to level 3 keep that assignment. Removing a rollout never removes assignments.',
+        btn: 'Remove rollout', tone: 'dgr', foot: 'Recorded against the track, not against individual subjects.'
+      },
+      reset: {
+        title: 'Reset subject to official', tag: 'State change', tagTone: 'pri', w: '560px',
+        lead: 'The assignment is removed and the subject resolves to the official level 1.',
+        detail: 'The subject may be picked up by an active rollout cohort again on a later request, because cohort membership is deterministic.',
+        btn: 'Reset to official', tone: 'pri', foot: 'Recorded as AdministrativeReset with your reason.'
+      },
+      newtrack: {
+        title: 'New feature track', tag: 'Draft', tagTone: 'ink', w: '560px',
+        lead: 'A new track starts with level 0 only, official level 0, and no rollouts.',
+        detail: 'Add a level to start a rollout. Level numbers are assigned automatically and cannot be changed afterwards.',
+        btn: 'Create track', tone: 'pri', foot: 'Name must be unique and stable — it is the key used in code.'
+      },
+      addlevel: {
+        title: 'Add level 5', tag: 'Append only', tagTone: 'acc', w: '560px',
+        lead: 'Level 5 is appended above level 4 and starts with no rollout and fallback policy None.',
+        detail: 'Nobody receives level 5 until an assignment or a rollout puts them there. Levels below it are unaffected because levels are cumulative.',
+        btn: 'Add level', tone: 'pri', foot: 'None is the safe default for writes; change it once you know the route is retryable.'
+      },
+      newrollout: {
+        title: 'New rollout', tag: 'Draft', tagTone: 'ink', w: '560px',
+        lead: 'A rollout targets one level and includes a deterministic percentage of subjects.',
+        detail: 'Start small. Growth is sticky, so a subject included at 1 % stays included as you grow, and shrinking never removes subjects that are already assigned.',
+        btn: 'Create rollout', tone: 'pri', foot: 'Percentages are stored as basis points; 25.00 % is 2500.'
+      }
+    };
+    const c = confirms[modal] || null;
+    const reasonOk = s.reason.trim().length > 0;
+    const em = s.emergency;
+
+    const levels = LEVELS.map(l => {
+      const cur = s.policies[l.n] || l.policy;
+      const st = this.node(l.n, { official: 1 });
+      return Object.assign({}, st, {
+        n: l.n, title: 'Level ' + l.n + ' — ' + l.title, desc: l.desc, support: l.support,
+        lab: l.n === 1 ? 'official' : (l.n > 1 ? 'experimental' : 'included'),
+        labC: l.n === 1 ? 'var(--pri)' : (l.n > 1 ? 'var(--acc)' : 'var(--ink3)'),
+        edge: l.n === 1 ? 'var(--pri)' : (l.n > 1 ? 'var(--acc)' : 'var(--border)'),
+        perf: l.perf ? 'Performance sensitive' : 'Not performance sensitive',
+        perfBg: l.perf ? 'var(--warn-bg)' : 'var(--surface2)',
+        perfC: l.perf ? 'var(--warn)' : 'var(--ink3)',
+        meta: l.meta, ctrlOpacity: viewOnly ? '.55' : '1',
+        policyNote: POLICY_NOTE[cur],
+        policies: POLICIES.map(p => ({
+          label: p.k, tip: viewOnly ? 'Requires ProgressiveDelivery.Levels.Manage' : p.tip,
+          cursor: ctrlCursor,
+          bg: p.k === cur ? (p.k === 'None' ? 'var(--pri)' : 'var(--acc)') : 'var(--surface)',
+          fg: p.k === cur ? (p.k === 'None' ? 'var(--on-pri)' : 'var(--on-acc)') : 'var(--ink2)',
+          bd: p.k === cur ? (p.k === 'None' ? 'var(--pri)' : 'var(--acc)') : 'var(--border)',
+          go: viewOnly ? null : () => this.setState({ policies: Object.assign({}, s.policies, { [l.n]: p.k }) })
+        }))
+      });
+    });
+
+    const mkAction = (label, toneName, mod, perm) => ({
+      label: label, tip: viewOnly ? 'Requires ProgressiveDelivery.' + perm : '',
+      cursor: ctrlCursor,
+      bd: viewOnly ? 'var(--border)' : this.tone(toneName)[0],
+      bg: viewOnly ? 'var(--surface2)' : 'var(--surface)',
+      fg: viewOnly ? 'var(--ink3)' : this.tone(toneName)[0],
+      go: viewOnly ? null : () => this.set('modal', mod)
+    });
+
+    return {
+      theme: s.theme, themeLabel: s.theme === 'light' ? 'Dark' : 'Light',
+      toggleTheme: () => this.set('theme', s.theme === 'light' ? 'dark' : 'light'),
+      tenant: tenant, cycleTenant: () => this.set('tenantIdx', s.tenantIdx + 1),
+      userName: viewOnly ? 'Dana Whitfield' : 'K. Francis',
+      userInitials: viewOnly ? 'DW' : 'KF',
+      userRole: viewOnly ? 'Support · Assignments.View' : 'Operations · all permissions',
+      crumb: crumbs[s.screen],
+
+      nav: [
+        this.navItem('tracks', 'Feature tracks', '6'),
+        this.navItem('track', 'Track detail', 'L1/4'),
+        this.navItem('inspect', 'Subject inspection', ''),
+        this.navItem('history', 'Transition history', '2 incidents', 'warn')
+      ],
+      nav2: [
+        this.navItem('support-inspect', 'Inspection (view-only)', ''),
+        this.navItem('support-track', 'Track detail (view-only)', ''),
+        this.navItem('mobile', 'Inspection on mobile', '')
+      ],
+
+      isTracks: s.screen === 'tracks', isTrack: isTrack, isInspect: isInspect,
+      isHistory: s.screen === 'history', isMobile: s.screen === 'mobile',
+      viewOnly: viewOnly, canManage: canManage, canLevels: canManage, canRollouts: canManage,
+      manageTip: manageTip, ctrlCursor: ctrlCursor,
+
+      q: s.q, setQ: e => this.set('q', e.target.value),
+      openNewTrack: () => this.set('modal', 'newtrack'),
+      trackCount: TRACKS.length + ' tracks · host level, assignments are tenant-scoped',
+      stats: [
+        { label: 'Tracks', value: '6', note: '1 disabled', color: 'var(--ink)' },
+        { label: 'Active rollouts', value: '3', note: '1 paused', color: 'var(--acc)' },
+        { label: 'Demotions 24 h', value: '14', note: 'across 2 tracks', color: 'var(--warn)' },
+        { label: 'Emergency overrides 7 d', value: '1', note: 'INC-2288', color: 'var(--dgr)' }
+      ],
+      trackRows: TRACKS.filter(t => t.name.toLowerCase().indexOf(s.q.toLowerCase()) >= 0).map(t => ({
+        name: t.name, display: t.display, official: t.official, highest: t.highest,
+        highC: t.highest > t.official ? 'var(--acc)' : 'var(--border)',
+        state: t.enabled ? 'Enabled' : 'Disabled',
+        stateBg: t.enabled ? 'var(--pri-bg)' : 'var(--surface2)',
+        stateC: t.enabled ? 'var(--pri)' : 'var(--ink3)',
+        rollouts: t.extra ? t.rollouts + '  ·  ' + t.extra : t.rollouts,
+        rolloutC: t.rollouts === '—' ? 'var(--ink3)' : 'var(--acc)',
+        demotions: t.dem, demC: t.demBad ? 'var(--warn)' : 'var(--ink3)', demW: t.demBad ? '600' : '400',
+        last: t.last, lastC: t.lastBad ? 'var(--warn)' : 'var(--ink2)', lastWhen: t.lastWhen,
+        go: () => this.go('track')
+      })),
+
+      openInspect: () => this.go(viewOnly ? 'support-inspect' : 'inspect'),
+      openPromote: () => this.set('modal', 'promote'),
+      openAddLevel: () => this.set('modal', 'addlevel'),
+      openNewRollout: () => this.set('modal', 'newrollout'),
+      openDisable: viewOnly ? null : () => this.set('modal', 'disable'),
+      openDelete: viewOnly ? null : () => this.set('modal', 'del'),
+
+      lineMain: this.line({ official: 1, highest: 4, rollouts: { 2: '25.00 %', 3: '5.00 %' } }),
+      lineInspect: this.line({ official: 1, highest: 4, effective: 2, assigned: 3, capAt: 2, rollouts: { 2: '25.00 %' } }),
+      lineOverride: this.line({ official: 1, highest: 4, selected: s.ovLevel, pick: true }),
+      linePromote: this.line({ official: 2, highest: 4 }),
+      lineMobile: this.line({ official: 1, highest: 4, effective: 2, capAt: 2 }),
+
+      tabs: ['levels', 'rollouts', 'assignments', 'history'].concat(viewOnly ? [] : ['danger']).map(t => ({
+        label: t === 'danger' ? 'Danger zone' : t.charAt(0).toUpperCase() + t.slice(1),
+        fg: tabKey === t ? (t === 'danger' ? 'var(--dgr)' : 'var(--ink)') : 'var(--ink3)',
+        bar: tabKey === t ? (t === 'danger' ? 'var(--dgr)' : 'var(--pri)') : 'transparent',
+        go: () => this.set('tab', t)
+      })),
+      tabLevels: tabKey === 'levels', tabRollouts: tabKey === 'rollouts',
+      tabAssignments: tabKey === 'assignments', tabHistory: tabKey === 'history',
+      tabDanger: tabKey === 'danger',
+      levels: levels,
+
+      pct: s.bp, bp: s.bp, pctLabel: pctLabel,
+      setPct: e => this.set('bp', Number(e.target.value)),
+      rolloutDisabled: viewOnly, rolloutOpacity: viewOnly ? '.55' : '1',
+      stops: [100, 500, 1000, 2500, 5000, 10000].map(v => ({
+        label: (v / 100).toFixed(0) + ' %', cursor: ctrlCursor,
+        bg: s.bp === v ? 'var(--pri-bg)' : 'var(--surface)',
+        fg: s.bp === v ? 'var(--pri)' : 'var(--ink2)',
+        bd: s.bp === v ? 'var(--pri)' : 'var(--border)',
+        go: viewOnly ? null : () => this.set('bp', v)
+      })),
+      toggleSkip: viewOnly ? null : () => this.set('skip', !s.skip),
+      skipMark: s.skip ? '✓' : '',
+      skipBd: s.skip ? 'var(--warn)' : 'var(--border)',
+      skipBg: s.skip ? 'var(--warn-bg)' : 'var(--surface2)',
+      skipBoxBd: s.skip ? 'var(--warn)' : 'var(--border)',
+      skipBoxBg: s.skip ? 'var(--warn)' : 'var(--surface)',
+      skipNoteC: s.skip ? 'var(--warn)' : 'var(--ink2)',
+      skipNote: s.skip
+        ? 'Subjects can jump straight to level 2 without having been at level 1. Intermediate levels are never exercised for them, so a failure at 2 has no proven lower rung to fall back to.'
+        : 'Subjects reach level 2 only after level 1. Off is the cautious choice.',
+      rolloutActions: [
+        mkAction('Pause', 'ink', 'suspend', 'Rollouts.Manage'),
+        mkAction('Suspend', 'warn', 'suspend', 'Rollouts.Manage'),
+        mkAction('Remove', 'dgr', 'remove', 'Rollouts.Manage')
+      ],
+      rollout2Actions: [
+        mkAction('Resume', 'pri', 'suspend', 'Rollouts.Manage'),
+        mkAction('Remove', 'dgr', 'remove', 'Rollouts.Manage')
+      ],
+
+      subjTypes: ['All', 'User', 'Tenant', 'Client', 'Anonymous'].map(t => ({
+        label: t,
+        bg: s.subjType === t ? 'var(--pri-bg)' : 'var(--surface)',
+        fg: s.subjType === t ? 'var(--pri)' : 'var(--ink2)',
+        bd: s.subjType === t ? 'var(--pri)' : 'var(--border)',
+        go: () => this.set('subjType', t)
+      })),
+      assignments: ASSIGNMENTS.filter(a => s.subjType === 'All' || a.type === s.subjType).map(a => {
+        const st = this.node(a.level, { official: 1 });
+        return Object.assign({}, st, {
+          type: a.type, id: a.id, level: a.level, reason: a.reason, tenant: a.tenant, when: a.when,
+          levelNote: a.kind === 'below' ? 'resolves to official 1' : '',
+          tip: viewOnly ? 'Requires ProgressiveDelivery.Assignments.Override' : '',
+          cursor: ctrlCursor,
+          actBd: viewOnly ? 'var(--border)' : 'var(--border)',
+          actC: viewOnly ? 'var(--ink3)' : 'var(--pri)',
+          override: viewOnly ? null : () => this.set('modal', 'override'),
+          reset: viewOnly ? null : () => this.set('modal', 'reset')
+        });
+      }),
+
+      trackHistory: TRACK_HISTORY.map(h => {
+        const t = this.tone(TYPE_TONE[h.type]);
+        return {
+          type: h.type, move: h.move, subject: h.subject, reason: h.reason, when: h.when,
+          corr: h.corr, trace: h.trace, tenant: h.tenant,
+          dot: t[0], typeBg: t[1], typeC: t[0],
+          copy: () => this.set('copied', h.corr)
+        };
+      }),
+      copyHint: s.copied ? 'Copied ' + s.copied + ' to the clipboard.' : 'Correlation and trace ids are copyable chips.',
+
+      histFilters: ['All', 'AutomaticDemotion', 'EmergencyOverride', 'ManualOverride', 'OfficialLevelChanged'].map(f => ({
+        label: f,
+        bg: s.histFilter === f ? (f === 'AutomaticDemotion' ? 'var(--warn-bg)' : 'var(--pri-bg)') : 'var(--surface)',
+        fg: s.histFilter === f ? (f === 'AutomaticDemotion' ? 'var(--warn)' : 'var(--pri)') : 'var(--ink2)',
+        bd: s.histFilter === f ? (f === 'AutomaticDemotion' ? 'var(--warn)' : 'var(--pri)') : 'var(--border)',
+        go: () => this.set('histFilter', f)
+      })),
+      globalHistory: GLOBAL_HISTORY.filter(h => s.histFilter === 'All' || h.type === s.histFilter).map(h => {
+        const t = this.tone(TYPE_TONE[h.type]);
+        const bad = h.type === 'AutomaticDemotion';
+        return {
+          track: h.track, type: h.type, move: h.move, subject: h.subject, reason: h.reason, when: h.when,
+          typeBg: t[1], typeC: t[0],
+          rowBg: bad ? 'var(--warn-bg)' : 'transparent',
+          edge: bad ? 'var(--warn)' : 'transparent'
+        };
+      }),
+      histCount: (s.histFilter === 'All' ? 8 : GLOBAL_HISTORY.filter(h => h.type === s.histFilter).length) + ' of 1 204 transitions',
+
+      resolution: [
+        { label: 'Official', value: '1', note: 'Minimum for everyone', color: 'var(--pri)', cardBg: 'var(--surface)' },
+        { label: 'Assigned', value: '3', note: 'Pilot user — search relevance', color: 'var(--acc)', cardBg: 'var(--surface)' },
+        { label: 'Cohort', value: '2', note: 'Rollout L2 @ 25.00 %', color: 'var(--acc)', cardBg: 'var(--surface)' },
+        { label: 'Effective', value: '2', note: 'max(official, assigned) capped by a constraint', color: 'var(--acc)', cardBg: 'var(--acc-bg)' }
+      ],
+      differences: [{ n: 2, title: 'Level 2 — Fuzzy name matching', support: LEVELS[2].support }],
+      constraints: [
+        { source: 'client-capability', effect: 'Lowered 3 → 2', reason: 'Header X-Cab-Capability: 2 reported by cab-mobile 4.2. Identifier-aware ranking needs capability 3.', bd: 'var(--warn)', bg: 'var(--warn-bg)', c: 'var(--warn)' },
+        { source: 'options-cap', effect: 'No effect (cap 4)', reason: 'LevelCaps["Cab.Patients.Search"] = 4 from configuration. Above the effective level, so it did not apply.', bd: 'var(--border)', bg: 'var(--surface2)', c: 'var(--ink2)' }
+      ],
+      inspectTypes: ['User', 'Tenant', 'Client', 'Anonymous'].map(t => ({
+        label: t,
+        bg: s.inspectType === t ? 'var(--pri)' : 'var(--surface)',
+        fg: s.inspectType === t ? 'var(--on-pri)' : 'var(--ink2)',
+        go: () => this.set('inspectType', t)
+      })),
+      overrideTip: viewOnly ? 'Requires ProgressiveDelivery.Assignments.Override' : '',
+      ovCursor: viewOnly ? 'not-allowed' : 'pointer',
+      ovBd: viewOnly ? 'var(--border)' : 'var(--pri)',
+      ovBg: viewOnly ? 'var(--surface2)' : 'var(--pri)',
+      ovC: viewOnly ? 'var(--ink3)' : 'var(--on-pri)',
+      ovBd2: 'var(--border)',
+      ovC2: viewOnly ? 'var(--ink3)' : 'var(--ink)',
+      openOverride: viewOnly ? null : () => this.set('modal', 'override'),
+      openReset: viewOnly ? null : () => this.set('modal', 'reset'),
+
+      dangerBd: 'var(--dgr)', dangerBg: 'var(--dgr-bg)', dangerC: 'var(--dgr)',
+      dangerBtnBd: viewOnly ? 'var(--border)' : 'var(--dgr)',
+      dangerBtnC: viewOnly ? 'var(--ink3)' : 'var(--dgr)',
+      deleteBg: viewOnly ? 'var(--surface2)' : 'var(--dgr)',
+      deleteC: viewOnly ? 'var(--ink3)' : 'var(--on-dgr)',
+
+      modalOpen: !!modal,
+      closeModal: () => this.set('modal', null),
+      stop: e => e.stopPropagation(),
+      isOverrideModal: modal === 'override',
+      isConfirmModal: !!c,
+      modalW: modal === 'override' ? '720px' : (c ? c.w : '560px'),
+      modalTitle: modal === 'override' ? 'Override level' : (c ? c.title : ''),
+      modalTag: modal === 'override' ? (em ? 'Emergency' : 'Manual override') : (c ? c.tag : ''),
+      modalTagBg: modal === 'override' ? (em ? 'var(--dgr-bg)' : 'var(--acc-bg)') : (c ? this.tone(c.tagTone)[1] : ''),
+      modalTagC: modal === 'override' ? (em ? 'var(--dgr)' : 'var(--acc)') : (c ? this.tone(c.tagTone)[0] : ''),
+      modalFootNote: modal === 'override'
+        ? (em ? 'Recorded as EmergencyOverride. Emergency overrides are reported separately and reviewed after the incident.' : 'Recorded as ManualOverride with your user id, reason, correlation id and trace id.')
+        : (c ? c.foot : ''),
+      confirmBtn: modal === 'override' ? (em ? 'Apply emergency override' : 'Apply override') : (c ? c.btn : 'Confirm'),
+      confirmBtnBg: modal === 'override'
+        ? (reasonOk ? (em ? 'var(--dgr)' : 'var(--pri)') : 'var(--border)')
+        : (c ? this.tone(c.tone)[0] : 'var(--pri)'),
+      confirmBtnC: modal === 'override'
+        ? (reasonOk ? (em ? 'var(--on-dgr)' : 'var(--on-pri)') : 'var(--ink3)')
+        : (c ? (c.tone === 'dgr' ? 'var(--on-dgr)' : (c.tone === 'warn' ? 'var(--on-warn)' : 'var(--on-pri)')) : 'var(--on-pri)'),
+      confirmLead: c ? c.lead : '', confirmDetail: c ? c.detail : '',
+      confirmHasLine: !!(c && c.line),
+      confirmBd: c && (c.tone === 'dgr' || c.tone === 'warn') ? this.tone(c.tone)[0] : 'var(--border)',
+      confirmBg: c && (c.tone === 'dgr' || c.tone === 'warn') ? this.tone(c.tone)[1] : 'var(--surface2)',
+
+      reason: s.reason, setReason: e => this.set('reason', e.target.value),
+      reasonBd: reasonOk ? 'var(--border)' : 'var(--dgr)',
+      reasonNoteC: reasonOk ? 'var(--ink3)' : 'var(--dgr)',
+      reasonNote: reasonOk ? s.reason.trim().length + ' / 512 characters — stored on the transition record' : 'A reason is required. It is stored on the transition record and shown to support staff.',
+      toggleEmergency: () => this.set('emergency', !em),
+      emMark: em ? '✓' : '',
+      emBd: em ? 'var(--dgr)' : 'var(--border)',
+      emBg: em ? 'var(--dgr-bg)' : 'var(--surface2)',
+      emBoxBd: em ? 'var(--dgr)' : 'var(--border)',
+      emBoxBg: em ? 'var(--dgr)' : 'var(--surface)',
+      emC: em ? 'var(--dgr)' : 'var(--ink)',
+      emNote: em
+        ? 'Recorded as EmergencyOverride rather than ManualOverride, and surfaced in the incident view. Use during an active incident.'
+        : 'Leave off for routine support work.',
+      summaryC: s.ovLevel > 1 ? 'var(--acc)' : 'var(--pri)',
+      summaryLine: s.ovLevel > 1
+        ? 'Level ' + s.ovLevel + ' — ' + LEVELS[s.ovLevel].title + ' (experimental)'
+        : 'Level ' + s.ovLevel + ' — ' + LEVELS[s.ovLevel].title,
+      summaryNote: s.ovLevel < 1
+        ? 'Below the official level 1, so the assignment resolves to official 1. Harmless, but it changes nothing today.'
+        : (s.ovLevel > 2
+          ? 'Cumulative, so levels up to ' + s.ovLevel + ' are included. The client-capability constraint currently caps this subject at 2, so level ' + s.ovLevel + ' will not take effect until the client reports capability ' + s.ovLevel + '.'
+          : 'Cumulative, so levels up to ' + s.ovLevel + ' are included. This is within the current client capability cap.')
+    };
+  }
+}
+
+</script>
+</body>
+</html>
