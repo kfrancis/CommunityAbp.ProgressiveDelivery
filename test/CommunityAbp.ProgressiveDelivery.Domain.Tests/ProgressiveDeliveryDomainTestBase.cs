@@ -1,4 +1,5 @@
 using CommunityAbp.ProgressiveDelivery.Assignments;
+using CommunityAbp.ProgressiveDelivery.Execution;
 using CommunityAbp.ProgressiveDelivery.Subjects;
 using CommunityAbp.ProgressiveDelivery.Tracks;
 using Volo.Abp.MultiTenancy;
@@ -20,6 +21,8 @@ public abstract class ProgressiveDeliveryDomainTestBase : ProgressiveDeliveryTes
     protected IFeatureTrackRepository TrackRepository => GetRequiredService<IFeatureTrackRepository>();
 
     protected RecordingTelemetry Telemetry => GetRequiredService<RecordingTelemetry>();
+
+    protected DeferredWriteTracker DeferredWrites => GetRequiredService<DeferredWriteTracker>();
 
     /// <summary>Switches the current user and tenant (principal + ICurrentTenant) for the returned scope.</summary>
     protected IDisposable ChangeUser(Guid userId, Guid? tenantId = null)

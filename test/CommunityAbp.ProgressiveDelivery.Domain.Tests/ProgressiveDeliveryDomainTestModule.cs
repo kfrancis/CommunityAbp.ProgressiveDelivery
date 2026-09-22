@@ -1,7 +1,9 @@
 using CommunityAbp.ProgressiveDelivery.EntityFrameworkCore;
+using CommunityAbp.ProgressiveDelivery.Execution;
 using CommunityAbp.ProgressiveDelivery.OpenTelemetry;
 using CommunityAbp.ProgressiveDelivery.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Volo.Abp.Modularity;
 
 namespace CommunityAbp.ProgressiveDelivery;
@@ -15,6 +17,10 @@ public class ProgressiveDeliveryDomainTestModule : AbpModule
     {
         context.Services.AddSingleton<RecordingTelemetry>();
         context.Services.AddSingleton<IProgressiveDeliveryTelemetry>(sp => sp.GetRequiredService<RecordingTelemetry>());
+
+        // Lets tests await deferred side-effect writes instead of polling the shared SQLite connection.
+        context.Services.AddSingleton<DeferredWriteTracker>();
+        context.Services.Replace(ServiceDescriptor.Transient<IProgressiveDeliveryWriteScheduler, TrackingWriteScheduler>());
 
         Configure<ProgressiveDeliveryOptions>(options =>
         {

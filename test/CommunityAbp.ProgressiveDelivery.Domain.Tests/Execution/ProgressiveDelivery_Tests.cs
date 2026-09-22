@@ -258,19 +258,12 @@ public class ProgressiveDelivery_Tests : ProgressiveDeliveryDomainTestBase
             });
         }
 
-        await WaitForAssignmentAsync(subject, 2);
-        await WaitUntilAsync(() => Telemetry.Transitions.Any(t => t.TransitionType == FeatureTransitionType.AutomaticDemotion && t.ToLevel == 2));
-    }
+        // The write runs on the thread pool once the unit of work is disposed. Wait for it rather than polling the
+        // database: the test database is a single shared SQLite connection that cannot be used concurrently.
+        await DeferredWrites.WaitForIdleAsync();
 
-    private static async Task WaitUntilAsync(Func<bool> condition)
-    {
-        var deadline = DateTime.UtcNow.AddSeconds(10);
-        while (!condition() && DateTime.UtcNow < deadline)
-        {
-            await Task.Delay(50);
-        }
-
-        condition().ShouldBeTrue("condition was not met in time");
+        (await FindAssignmentAsync(Track, subject))!.AssignedLevel.ShouldBe(2);
+        Telemetry.Transitions.ShouldContain(t => t.TransitionType == FeatureTransitionType.AutomaticDemotion && t.ToLevel == 2);
     }
 
     [Test]
@@ -286,24 +279,9 @@ public class ProgressiveDelivery_Tests : ProgressiveDeliveryDomainTestBase
                 ProgressiveDelivery.ExecuteAsync(ProgressiveDeliveryTestData.SearchTrack, Routes(succeedAt: [1, 0]))));
         }
 
-        await WaitForAssignmentAsync(subject, 1, ProgressiveDeliveryTestData.SearchTrack);
-    }
+        await DeferredWrites.WaitForIdleAsync();
 
-    private async Task WaitForAssignmentAsync(FeatureSubject subject, int expectedLevel, string trackName = Track)
-    {
-        var deadline = DateTime.UtcNow.AddSeconds(10);
-        while (DateTime.UtcNow < deadline)
-        {
-            var assignment = await FindAssignmentAsync(trackName, subject);
-            if (assignment?.AssignedLevel == expectedLevel)
-            {
-                return;
-            }
-
-            await Task.Delay(50);
-        }
-
-        (await FindAssignmentAsync(trackName, subject))!.AssignedLevel.ShouldBe(expectedLevel, "deferred demotion did not persist in time");
+        (await FindAssignmentAsync(ProgressiveDeliveryTestData.SearchTrack, subject))!.AssignedLevel.ShouldBe(1);
     }
 
     /// <summary>Routes 0..3 returning their level; every level not in <paramref name="succeedAt"/> throws.</summary>
