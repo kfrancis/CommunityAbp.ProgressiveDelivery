@@ -40,5 +40,27 @@ dotnet test --project test/CommunityAbp.ProgressiveDelivery.Domain.Tests
 
 ## Releases
 
-Versions come from git tags via MinVer (`v1.2.3`). Publishing a GitHub release triggers the `publish` job in
-`.github/workflows/build.yml`, which pushes the validated packages to NuGet.org using the `NUGET_APIKEY` secret.
+Versions come from git tags via MinVer (`v1.2.3`, pre-releases such as `v1.2.3-preview.1`). Between tags, builds
+get `last-tag + height` with the `preview.0` identifier, so local builds never collide with a released version.
+
+Publishing a GitHub release triggers the `publish` job in `.github/workflows/build.yml`, which pushes the validated
+packages to NuGet.org via [Trusted Publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing). No
+API key is stored anywhere; the job's `id-token: write` permission and `NuGet/login@v1` exchange the GitHub OIDC
+token for a short-lived key at run time.
+
+One-time setup (repo owner):
+
+1. nuget.org -> profile -> Trusted Publishing -> Add policy: repository owner `kfrancis`, repository
+   `CommunityAbp.ProgressiveDelivery`, workflow file `build.yml`, environment empty. A new policy must be used within
+   7 days to become permanently active.
+2. GitHub repo -> Settings -> Secrets and variables -> Actions -> Variables: `NUGET_USER` = the nuget.org profile
+   name that owns the policy.
+
+Cutting a release:
+
+```powershell
+git tag v0.1.0-preview.1
+git push origin v0.1.0-preview.1
+```
+
+Then create a GitHub release from that tag. The `build` workflow runs tests, packs, validates and publishes.
