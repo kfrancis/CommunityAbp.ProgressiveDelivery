@@ -21,6 +21,7 @@ public sealed class FeatureTrackDefinition
 
     public string? Description { get; set; }
 
+    /// <summary>Applied only when the track is first created.</summary>
     public bool IsEnabled { get; set; } = true;
 
     /// <summary>Applied only when the track is first created.</summary>
