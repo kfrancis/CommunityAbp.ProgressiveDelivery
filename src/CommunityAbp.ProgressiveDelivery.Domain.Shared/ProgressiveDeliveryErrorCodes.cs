@@ -15,4 +15,5 @@ public static class ProgressiveDeliveryErrorCodes
     public const string RolloutNotFound = Prefix + "RolloutNotFound";
     public const string RolloutTargetMustBeAboveOfficial = Prefix + "RolloutTargetMustBeAboveOfficial";
     public const string PercentageOutOfRange = Prefix + "PercentageOutOfRange";
+    public const string TrackDefinedInCode = Prefix + "TrackDefinedInCode";
 }

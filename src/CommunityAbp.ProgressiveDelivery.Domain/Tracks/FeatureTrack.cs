@@ -26,6 +26,12 @@ public class FeatureTrack : AuditedAggregateRoot<Guid>
     /// <summary>When disabled, every subject resolves to <see cref="OfficialLevel"/> regardless of assignment.</summary>
     public bool IsEnabled { get; private set; }
 
+    /// <summary>
+    /// <c>true</c> when the definition (display name, description, levels) comes from
+    /// <c>ProgressiveDeliveryOptions.Tracks</c> and is maintained by seeding; the admin API then only operates the track.
+    /// </summary>
+    public bool IsDefinedInCode { get; private set; }
+
     public virtual ICollection<FeatureLevel> Levels { get; protected set; } = default!;
 
     public virtual ICollection<FeatureRollout> Rollouts { get; protected set; } = default!;
@@ -50,6 +56,12 @@ public class FeatureTrack : AuditedAggregateRoot<Guid>
     internal void SetName(string name)
     {
         Name = Check.NotNullOrWhiteSpace(name, nameof(name), ProgressiveDeliveryConsts.MaxTrackNameLength).Trim();
+    }
+
+    internal FeatureTrack SetDefinedInCode(bool isDefinedInCode)
+    {
+        IsDefinedInCode = isDefinedInCode;
+        return this;
     }
 
     public FeatureTrack SetDisplayName(string? displayName)
