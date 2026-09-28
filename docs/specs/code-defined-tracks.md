@@ -1,6 +1,6 @@
 # Spec: code-defined tracks (upsert on seed, read-only definition in admin)
 
-Status: proposed · Branch: `feat/code-defined-track-upsert`
+Status: implemented · Branch: `feat/code-defined-track-upsert` · Decision: [ADR 0008](../adr/0008-code-owns-track-definitions.md)
 
 ## Problem
 
