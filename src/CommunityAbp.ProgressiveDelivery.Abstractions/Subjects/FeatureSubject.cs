@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace CommunityAbp.ProgressiveDelivery.Subjects;
 
 /// <summary>
@@ -12,15 +14,15 @@ public sealed record FeatureSubject
         ArgumentException.ThrowIfNullOrWhiteSpace(type);
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
-        Type = type;
-        Id = id;
+        Type = NormalizeType(type);
+        Id = NormalizeId(id);
         TenantId = tenantId;
     }
 
-    /// <summary>One of <see cref="FeatureSubjectTypes"/> or a custom value.</summary>
+    /// <summary>One of <see cref="FeatureSubjectTypes"/> or a custom value. Always in canonical form (see <see cref="NormalizeType"/>).</summary>
     public string Type { get; }
 
-    /// <summary>Stable identifier within <see cref="Type"/>.</summary>
+    /// <summary>Stable identifier within <see cref="Type"/>. Always in canonical form (see <see cref="NormalizeId"/>).</summary>
     public string Id { get; }
 
     /// <summary>Tenant the subject belongs to; <c>null</c> for host-level subjects.</summary>
@@ -35,6 +37,64 @@ public sealed record FeatureSubject
     public static FeatureSubject Anonymous(string sessionId, Guid? tenantId = null) => new(FeatureSubjectTypes.Anonymous, sessionId, tenantId);
 
     public static FeatureSubject Custom(string type, string id, Guid? tenantId = null) => new(type, id, tenantId);
+
+    /// <summary>
+    /// Canonical form of a subject type: trimmed, and well-known <see cref="FeatureSubjectTypes"/> matched
+    /// case-insensitively onto their constant (<c>"user"</c> becomes <c>"User"</c>). Custom types are kept as given.
+    /// </summary>
+    /// <remarks>
+    /// Subject types and ids are compared ordinally everywhere (database, cache keys, rollout hashing), so every
+    /// value that crosses into the library must go through this and <see cref="NormalizeId"/>. Returns <c>null</c>
+    /// for <c>null</c> so it can be applied to optional filters.
+    /// </remarks>
+    [return: NotNullIfNotNull(nameof(type))]
+    public static string? NormalizeType(string? type)
+    {
+        if (type is null)
+        {
+            return null;
+        }
+
+        var trimmed = type.Trim();
+        foreach (var known in WellKnownTypes)
+        {
+            if (string.Equals(trimmed, known, StringComparison.OrdinalIgnoreCase))
+            {
+                return known;
+            }
+        }
+
+        return trimmed;
+    }
+
+    /// <summary>
+    /// Canonical form of a subject id: trimmed, and GUIDs (<c>D</c>, <c>B</c> or <c>P</c> format, any casing)
+    /// rewritten as lower-case <c>D</c> format, matching <see cref="User(Guid, Guid?)"/> and <see cref="Tenant(Guid)"/>.
+    /// Other ids are opaque and kept as given apart from trimming.
+    /// </summary>
+    [return: NotNullIfNotNull(nameof(id))]
+    public static string? NormalizeId(string? id)
+    {
+        if (id is null)
+        {
+            return null;
+        }
+
+        var trimmed = id.Trim();
+        return Guid.TryParseExact(trimmed, "D", out var guid)
+            || Guid.TryParseExact(trimmed, "B", out guid)
+            || Guid.TryParseExact(trimmed, "P", out guid)
+            ? guid.ToString("D")
+            : trimmed;
+    }
+
+    private static readonly string[] WellKnownTypes =
+    [
+        FeatureSubjectTypes.User,
+        FeatureSubjectTypes.Tenant,
+        FeatureSubjectTypes.Client,
+        FeatureSubjectTypes.Anonymous
+    ];
 
     public override string ToString() => TenantId is null ? $"{Type}:{Id}" : $"{Type}:{Id}@{TenantId:D}";
 }

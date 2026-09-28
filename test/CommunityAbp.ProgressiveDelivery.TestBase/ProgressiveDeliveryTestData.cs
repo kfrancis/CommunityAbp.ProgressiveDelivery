@@ -5,6 +5,9 @@ public static class ProgressiveDeliveryTestData
 {
     public static readonly Guid UserId = new("11111111-1111-1111-1111-111111111111");
     public static readonly Guid OtherUserId = new("22222222-2222-2222-2222-222222222222");
+
+    /// <summary>Contains hex letters, so casing differences between stored and supplied ids are observable.</summary>
+    public static readonly Guid HexUserId = new("a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d");
     public static readonly Guid TenantA = new("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
     public static readonly Guid TenantB = new("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
 

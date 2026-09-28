@@ -1,4 +1,5 @@
 using System.Linq.Dynamic.Core;
+using CommunityAbp.ProgressiveDelivery.Subjects;
 using CommunityAbp.ProgressiveDelivery.Transitions;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
@@ -55,11 +56,13 @@ public class EfCoreFeatureTransitionRepository : EfCoreRepository<IProgressiveDe
 
         if (!string.IsNullOrWhiteSpace(subjectType))
         {
+            subjectType = FeatureSubject.NormalizeType(subjectType);
             query = query.Where(t => t.SubjectType == subjectType);
         }
 
         if (!string.IsNullOrWhiteSpace(subjectId))
         {
+            subjectId = FeatureSubject.NormalizeId(subjectId);
             query = query.Where(t => t.SubjectId == subjectId);
         }
 
