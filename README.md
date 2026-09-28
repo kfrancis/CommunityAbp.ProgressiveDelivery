@@ -1,5 +1,10 @@
 # CommunityAbp.ProgressiveDelivery
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.png">
+  <img alt="CommunityAbp.ProgressiveDelivery: versioned implementations, promoted one level at a time. Levels 0 to 4 with level 1 official and levels 2 to 4 experimental" src="docs/images/hero-light.png" width="800">
+</picture>
+
 [![build](https://github.com/kfrancis/CommunityAbp.ProgressiveDelivery/actions/workflows/build.yml/badge.svg)](https://github.com/kfrancis/CommunityAbp.ProgressiveDelivery/actions/workflows/build.yml)
 [![NuGet](https://img.shields.io/nuget/v/CommunityAbp.ProgressiveDelivery.Domain.svg)](https://www.nuget.org/packages/CommunityAbp.ProgressiveDelivery.Domain)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -46,6 +51,11 @@ This is **not** ordinary A/B testing. There is no conversion metric and no "winn
 
 ## Why integer levels instead of boolean feature flags?
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/levels-vs-flags-dark.png">
+  <img alt="Three boolean flags give 8 combinations, four of them untested; one cumulative track gives 4 levels on a line, each including the ones below" src="docs/images/levels-vs-flags-light.png" width="800">
+</picture>
+
 A boolean flag answers "is X on?". Real replacements are rarely one switch. An optimised claims loader might go
 through *optimised SQL*, then *plus caching*, then *plus parallel validation*. Modelling that as three independent
 booleans creates 2³ combinations, most of which were never tested together, and no notion of "further along".
@@ -64,6 +74,11 @@ valid states is a line, not a lattice. Rollback becomes "go one step down" and s
 subject is running by listing the levels between official and effective.
 
 ## Feature tracks
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/independent-tracks-dark.png">
+  <img alt="Four tracks versioned independently: Cab.Claims.Backend is demoted from 3 to 2 while Cab.PatientSearch, Cab.Claims.Web and Cab.Claims.Mobile are unaffected" src="docs/images/independent-tracks-light.png" width="800">
+</picture>
 
 A **FeatureTrack** is an independently versioned, promotable, observable, rollback-capable behaviour. Tracks are
 deliberately independent: there is no application-wide version.
@@ -176,6 +191,11 @@ var level = await progressiveDelivery.GetEffectiveLevelAsync(CabFeatureTracks.Cl
 
 ## Effective-level resolution
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/effective-level-resolution-dark.png">
+  <img alt="Effective-level resolution: official floor, assignment, rollout cohort, constraints, effective level" src="docs/images/effective-level-resolution-light.png" width="800">
+</picture>
+
 ```
 Request
    |
@@ -237,6 +257,11 @@ Unknown tracks resolve to level 0 with a warning by default (`UnknownTrackBehavi
 
 ## Sticky rollout
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/sticky-rollout-dark.png">
+  <img alt="Cohorts grow and never reshuffle: subjects included at 5 percent stay included at 25 and 100 percent, with bucket = SHA256(type|id|track|level) mod 10000" src="docs/images/sticky-rollout-light.png" width="800">
+</picture>
+
 A `FeatureRollout` targets one level with a percentage in basis points (100 = 1 %). Membership is
 `SHA256(subjectType | subjectId | track | level) mod 10000 < percentage`: deterministic, platform independent, and
 **monotonic** — a subject included at 5 % is still included at 25 % and 100 %. Nothing is randomised per request.
@@ -249,6 +274,11 @@ A `FeatureRollout` targets one level with a percentage in basis points (100 = 1 
 - Promoting the target level to official completes the rollout.
 
 ## Automatic demotion / fallback
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/automatic-demotion-dark.png">
+  <img alt="Automatic demotion under FallbackPolicy.SafeRead: route 3 throws, demote to 2; route 2 throws, demote to 1; route 1 at the official floor succeeds; route 0 is never reached" src="docs/images/automatic-demotion-light.png" width="800">
+</picture>
 
 When a route throws, the runtime looks at the **fallback policy of the failing level** (or the per-call override):
 
@@ -278,6 +308,11 @@ with its transaction. Support can correlate an incident by track, level, subject
 Cancellation never triggers fallback.
 
 ## Safe reads vs writes
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/fallback-policies-dark.png">
+  <img alt="Fallback policy per level: None demotes and retries nothing, DemoteOnly demotes without retry, SafeRead and Idempotent demote and re-execute the lower route" src="docs/images/fallback-policies-light.png" width="800">
+</picture>
 
 Automatic fallback re-executes a *lower* implementation after a *higher* one threw. That is only safe when the failed
 route left nothing behind. Consider:
@@ -398,6 +433,11 @@ They compose: check the ABP feature first, then execute through `IProgressiveDel
 wraps `IFeatureChecker`.
 
 ## Architecture
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/architecture-dark.png">
+  <img alt="Package layers: UI and integrations (Web, AspNetCore, OpenTelemetry), HTTP, application, persistence, and core (Domain, Domain.Shared, Abstractions)" src="docs/images/architecture-light.png" width="800">
+</picture>
 
 ```
 Abstractions ──────────────┐   pure .NET: IProgressiveDelivery, FallbackPolicy, FeatureSubject,
