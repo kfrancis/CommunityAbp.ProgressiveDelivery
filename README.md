@@ -124,7 +124,10 @@ and add a migration in the host (`dotnet ef migrations add AddProgressiveDeliver
 
 ### 2. Define tracks
 
-Code-first definitions are seeded on `IDataSeeder.SeedAsync()` (idempotent; existing tracks are never lowered):
+Definitions are upserted on every `IDataSeeder.SeedAsync()`: the definition (display name, description, level
+descriptions, support descriptions, fallback policy, performance flag) follows code, and missing levels are
+appended. Operational state (official level, enabled, rollouts, assignments) is set only at creation and afterwards
+belongs to admins.
 
 ```csharp
 Configure<ProgressiveDeliveryOptions>(options =>
@@ -140,7 +143,10 @@ Configure<ProgressiveDeliveryOptions>(options =>
 });
 ```
 
-Tracks can also be created and edited through `IFeatureTrackAppService` / `api/progressive-delivery/tracks`.
+Code-defined tracks are read-only in the admin API/UI apart from operational actions (new
+`PUT api/progressive-delivery/tracks/{id}/enabled` for enable/disable); tracks created through the admin API/UI
+remain fully editable. Removing a track from code retires it (it becomes an ordinary admin track that can then be
+deleted).
 
 ### 3. Consume
 
