@@ -381,6 +381,9 @@ application contracts, so it works in tiered deployments with `ProgressiveDelive
 | Transition history | `/ProgressiveDelivery/Transitions` | `ProgressiveDelivery.Telemetry` |
 
 Mutating controls are hidden without the matching permission; support staff with `Assignments.View` get a read-only view.
+Tracks defined in code carry a *Defined in code* badge and expose only operational controls (official level,
+enable/disable, rollouts, overrides); editing, adding levels and deleting are hidden and rejected by the API
+([ADR 0008](docs/adr/0008-code-owns-track-definitions.md)).
 Styling uses the active theme's Bootstrap variables (Basic and LeptonX). The design source lives in
 [docs/design](docs/design).
 
@@ -425,7 +428,7 @@ Persistence (`Pd` table prefix):
 
 | Table                 | Purpose                                                        |
 |-----------------------|----------------------------------------------------------------|
-| `PdFeatureTracks`     | track definitions (unique `Name`)                              |
+| `PdFeatureTracks`     | track definitions (unique `Name`; `IsDefinedInCode` marker)    |
 | `PdFeatureLevels`     | cumulative levels per track (unique `FeatureTrackId + Level`)  |
 | `PdFeatureRollouts`   | percentage rollouts per target level                           |
 | `PdFeatureAssignments`| sticky `subject + track -> level` (unique per tenant)          |
@@ -467,6 +470,30 @@ ProgressiveDelivery.Telemetry          (transition history)
 ```
 
 Support staff with `Assignments.View` can inspect without being able to change rollout state.
+
+## Upgrading
+
+The module ships no EF Core migrations, so schema changes need a migration in the host. Breaking or
+behaviour-changing upgrades are listed here.
+
+### Code-defined tracks (`IsDefinedInCode`)
+
+- **Schema:** new non-nullable column `PdFeatureTracks.IsDefinedInCode`. Add a host migration, for example
+  `dotnet ef migrations add AddFeatureTrackIsDefinedInCode`. Existing rows default to `false` (admin-managed) until
+  the next seed adopts the tracks still listed in `ProgressiveDeliveryOptions.Tracks`.
+- **Behaviour:** seeding now upserts code-defined definitions (display name, description, level fields), and the
+  admin API rejects definition changes to those tracks with `ProgressiveDelivery:TrackDefinedInCode`. Enable/disable
+  moves to `PUT api/progressive-delivery/tracks/{id}/enabled`. `UpdateAsync` still works when the text is unchanged.
+- **Validation:** invalid definitions (duplicate, non-contiguous or negative levels, out-of-range
+  `InitialOfficialLevel`) now throw at startup instead of partially seeding.
+- **`InitialOfficialLevel`:** applied only when a track is created. It no longer re-promotes a track an admin has
+  demoted to level 0.
+- **API:** `ProgressiveDeliveryDataSeedContributor`'s constructor takes an `IGuidGenerator`; subclasses must pass it
+  through.
+- **Sample host:** it builds its schema with `EnsureCreated`, so delete `progressive-delivery-sample.db` to pick up
+  the new column.
+
+See [ADR 0008](docs/adr/0008-code-owns-track-definitions.md) and [docs/database.md](docs/database.md#seeding).
 
 ## Roadmap
 

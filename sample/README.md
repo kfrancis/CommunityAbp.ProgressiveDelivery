@@ -23,7 +23,8 @@ dotnet run --project sample/CommunityAbp.ProgressiveDelivery.Sample.AppHost --la
 
 The first build runs `abp install-libs` to pull the client-side libraries into `wwwroot/libs` (git-ignored).
 The SQLite file `progressive-delivery-sample.db` is created next to the Web project and seeded on first start;
-delete it to reset the demo.
+delete it to reset the demo. The schema comes from `EnsureCreated`, which never alters an existing file, so also
+delete it after pulling a change that adds columns (for example `PdFeatureTracks.IsDefinedInCode`).
 
 ## What is in the box
 
