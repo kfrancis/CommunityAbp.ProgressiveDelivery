@@ -35,21 +35,22 @@ disable, run rollouts, and override assignments. The code is the source of truth
 
 ## Design
 
-### 1. Ownership marker (schema change)
+### 1. Code-defined marker (schema change)
 
-Add `FeatureTrack.DefinitionOwner` (`string?`, max 128, new `ProgressiveDeliveryConsts.MaxDefinitionOwnerLength`).
+Add `FeatureTrack.IsDefinedInCode` (`bool`, default `false`).
 
-- `null`: the track is admin-managed. This is today's behaviour, and applies to every existing row after migrating.
-- Non-null: the track is defined in code by the named application.
+- `false`: the track is admin-managed. This is today's behaviour, and applies to every existing row after migrating.
+- `true`: the definition comes from `ProgressiveDeliveryOptions.Tracks`.
 
-The owner value is `ProgressiveDeliveryOptions.ApplicationName ?? IApplicationInfoAccessor.ApplicationName ?? "Code"`,
-which is the same resolution `ProgressiveDelivery.cs:88` already uses.
+The marker is persisted rather than worked out at runtime from `options.Tracks`. In tiered deployments, the process
+serving the admin API may not configure the tracks, so it could not tell which ones are code-defined.
 
-The marker is persisted rather than worked out at runtime from `options.Tracks`. In tiered or multi-app deployments,
-the process serving the admin API often does not configure the tracks, so it could not tell which ones are code-defined.
+A plain flag is enough; recording which application owns a track is not needed. Every process that seeds (web host,
+DbMigrator, worker) is built from the same codebase and configures the same definitions, so there is no owner to
+disagree about.
 
-Entity API: `FeatureTrack.IsDefinedInCode => DefinitionOwner is not null`, plus an internal `SetDefinitionOwner(string?)`
-that only the seeder calls through `FeatureTrackManager`.
+Entity API: `IsDefinedInCode` with a private setter, plus an internal `SetDefinedInCode(bool)` that only the seeder
+calls through `FeatureTrackManager`.
 
 **Host impact:** the library ships no migrations. Hosts must add one (`dotnet ef migrations add ...`). This needs
 calling out in the release notes and in `docs/database.md`.
@@ -61,12 +62,10 @@ For each definition, still host-only (`context.TenantId is null`), in one unit o
 1. **Validate the definition first, and throw at startup if it is invalid.** Levels must be distinct, contiguous from
    0, and non-negative. `InitialOfficialLevel` must be within range. Invalid definitions are programmer errors and
    should fail loudly, not partially seed.
-2. **Track missing:** create it as today, with `DefinitionOwner = owner`.
-3. **Track exists and `DefinitionOwner` is null** (admin-created with the same name, or created before this feature):
-   adopt it. Set the owner, then apply step 5. Log at Information.
-4. **Track exists, owned by another application:** skip it and log a Warning naming both owners. Two apps must not
-   fight over one definition; the first owner keeps it. See open question 1.
-5. **Track exists, owned by this application:** upsert.
+2. **Track missing:** create it as today, with `IsDefinedInCode = true`.
+3. **Track exists and is not marked** (admin-created with the same name, or created before this feature): adopt it.
+   Set `IsDefinedInCode = true`, then apply step 4. Log at Information.
+4. **Track exists and is marked:** upsert.
    - Set `DisplayName` and `Description` from code.
    - Append levels above `HighestAvailableLevel` (existing `AddLevelAsync`).
    - For each level present in both code and the database, set the four level fields from code.
@@ -78,9 +77,13 @@ For each definition, still host-only (`context.TenantId is null`), in one unit o
      definition-cache churn across every node.
    - Log each changed field at Information, for example `Track {Track} level {Level} FallbackPolicy None -> SafeRead
      (from code)`.
-6. **Release orphans.** Tracks with `DefinitionOwner == owner` that are no longer in `options.Tracks` get
-   `DefinitionOwner = null`, so they become admin-managed and editable again. Log a Warning. Never delete them.
-   Only this application's own tracks are released, so another app's tracks are never affected.
+5. **Track removed from code (retired).** This is the normal end of a track's life: the experiment is finished, the
+   winning path is made permanent in code, and the track definition is deleted. A track that is marked
+   `IsDefinedInCode` but no longer appears in `options.Tracks` gets `IsDefinedInCode = false`, and the seeder logs a
+   Warning ("Track {Track} is no longer defined in code; it can be deleted from the admin UI"). The seeder never
+   deletes it: nothing calls it any more, but its transitions are history, and deleting should be a deliberate act.
+   The existing early return when `options.Tracks` is empty stays. That way a process which does not configure
+   tracks at all cannot retire every track.
 
 Also fix the existing inconsistency where level 0's extra fields are set on the entity after `CreateAsync` has
 already saved. Route this through the same upsert path, so creating a track is simply creating an empty track and
@@ -92,7 +95,7 @@ The guard goes in `FeatureTrackAppService`, not the domain manager. The lock is 
 must keep using `FeatureTrackManager` freely.
 
 New error code `ProgressiveDeliveryErrorCodes.TrackDefinedInCode`, with `en.json` text:
-`"Feature track '{Name}' is defined in code by '{Owner}'. Change its definition in code; only operational settings can be changed here."`
+`"Feature track '{Name}' is defined in code. Change its definition in code; only operational settings can be changed here."`
 
 | Method | Behaviour for a code-defined track |
 |---|---|
@@ -104,20 +107,22 @@ New error code `ProgressiveDeliveryErrorCodes.TrackDefinedInCode`, with `en.json
 | `CreateAsync` with a name already owned in code | already rejected by `TrackNameAlreadyExists`; no change needed |
 | `SetOfficialLevelAsync`, rollouts, assignments | unchanged |
 
-`FeatureTrackDto` gains `DefinitionOwner` (`string?`) and `IsDefinedInCode` (`bool`). This is regenerated into the
+`FeatureTrackDto` gains `IsDefinedInCode` (`bool`). This is regenerated into the
 HttpApi.Client proxies automatically.
 
 ### 4. Admin UI (`Web/Pages/ProgressiveDelivery/Tracks`)
 
 For code-defined tracks:
 
-- **Index:** hide the "Edit" and "Delete" row actions. Show a "Defined in code" badge whose tooltip gives the owner.
+- **Index:** hide the "Edit" and "Delete" row actions. Show a "Defined in code" badge.
 - **Detail:** hide `#EditTrackButton`, `#AddLevelButton`, the per-level `.pd-edit-level` buttons and
-  `#DeleteTrackButton`. Show the badge plus one line: "Definition is managed in code by {Owner}."
+  `#DeleteTrackButton`. Show the badge plus one line: "This track's definition is managed in code."
 - **Detail:** make `#ToggleEnabledButton` call the new `setEnabled` endpoint for **all** tracks, instead of `update`
   with the display name and description read back from `data-*` attributes.
 - Promote/demote, rollouts and overrides are unchanged.
-- New localisation keys: `DefinedInCode`, `DefinedInCodeBy`, plus the error message.
+- A retired track (removed from code) is an ordinary admin-managed track again, so Delete is available. That is the
+  cleanup step once a test is finished.
+- New localisation keys: `DefinedInCode`, `DefinedInCodeHint`, plus the error message.
 
 Hiding buttons is cosmetic. Section 3 is the enforcement.
 
@@ -126,15 +131,16 @@ Hiding buttons is cosmetic. Section 3 is the enforcement.
 Seeder (Domain.Tests). This needs a way to re-run the seeder with changed options, for example by building a
 `ProgressiveDeliveryDataSeedContributor` with a hand-made `IOptions` in the test.
 
-- A new track is created with `DefinitionOwner` set.
+- A new track is created with `IsDefinedInCode = true`.
 - Re-seeding with a changed display name, description, level description, `FallbackPolicy` or performance flag
   updates the stored values and invalidates the definition cache (the resolver sees the new `FallbackPolicy`).
 - Re-seeding with no drift performs no update and publishes no `FeatureTrackChangedEto`.
 - Re-seeding does not change `OfficialLevel`, `IsEnabled` or rollouts after an admin has changed them.
 - A new higher level in code is appended; a level that exists only in the database is kept and a warning is logged.
 - An admin-created track with the same name is adopted.
-- A track owned by another application is skipped with a warning and left unchanged.
-- A track removed from code is released (owner set to null) and not deleted.
+- A track removed from code is retired (`IsDefinedInCode = false`, a warning is logged, not deleted), and it can then
+  be deleted through the app service.
+- Seeding with an empty `options.Tracks` retires nothing.
 - Invalid definitions (gap, duplicate, `InitialOfficialLevel` out of range) throw.
 
 App service (Application.Tests):
@@ -145,7 +151,7 @@ App service (Application.Tests):
   admin-created tracks.
 - `SetEnabledAsync` works on both kinds of track.
 - `SetOfficialLevelAsync` and rollouts still work on code-defined tracks.
-- `FeatureTrackDto.IsDefinedInCode` and `DefinitionOwner` are populated.
+- `FeatureTrackDto.IsDefinedInCode` is populated.
 
 Web (Web.Tests):
 
@@ -156,7 +162,7 @@ Web (Web.Tests):
 - `README.md` §2 "Define tracks": describe the upsert, the lock, and which fields are operational.
 - `docs/database.md` "Seeding": replace the create/append-only description. Add the new column and the need for a
   host migration.
-- New ADR `docs/adr/0008-code-owns-track-definitions.md`, recording the decision and the ownership and release rules.
+- New ADR `docs/adr/0008-code-owns-track-definitions.md`, recording the decision and the adopt and retire rules.
 
 ## Out of scope
 
@@ -164,12 +170,10 @@ Web (Web.Tests):
 - Renaming tracks.
 - Seeding tenant-scoped data (tracks are host-level, ADR 0004).
 
-## Open questions (for the developer)
+## Decisions
 
-1. **Two apps define the same track.** The proposal is that the first owner keeps it and the other app logs a
-   warning. The alternative is to allow a shared owner and fail startup if the definitions differ. Is a shared track
-   across deployables a real scenario?
-2. **Admin "release" action.** Should an admin be able to detach a track from code (set the owner to null) from the
-   UI, or only by removing it from code? The proposal: only via code.
-3. **Opt-out.** Should there be an options switch (for example `options.LockCodeDefinedTracks = false`) for hosts
-   that want the upsert but not the UI lock? The proposal: no, until someone asks.
+- **Code owns the definition; admins operate the track** (option 4). There is no switch to turn off the admin lock.
+- **A single `IsDefinedInCode` flag, no per-application owner.** All seeding processes share one codebase and
+  therefore one set of definitions.
+- **No "unlock" action.** A track stops being code-defined only by removing it from code (retiring it). After that,
+  admins can delete it.
