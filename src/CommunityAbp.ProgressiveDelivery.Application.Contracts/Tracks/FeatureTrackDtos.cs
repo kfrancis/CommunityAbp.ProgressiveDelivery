@@ -17,6 +17,8 @@ public class FeatureTrackDto : AuditedEntityDto<Guid>
 
     public bool IsEnabled { get; set; }
 
+    public bool IsDefinedInCode { get; set; }
+
     public string? ConcurrencyStamp { get; set; }
 
     public List<FeatureLevelDto> Levels { get; set; } = [];
@@ -132,4 +134,11 @@ public class SetOfficialLevelDto
 
     [StringLength(ProgressiveDeliveryConsts.MaxReasonLength)]
     public string? Reason { get; set; }
+}
+
+public class SetFeatureTrackEnabledDto
+{
+    public bool IsEnabled { get; set; }
+
+    public string? ConcurrencyStamp { get; set; }
 }

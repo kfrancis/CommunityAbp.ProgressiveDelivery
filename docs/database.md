@@ -39,6 +39,11 @@ Prefix and schema come from `ProgressiveDeliveryDbProperties.DbTablePrefix` (`Pd
 | `PdFeatureAssignments` | unique `(TenantId, FeatureTrackId, SubjectType, SubjectId)`; `(TenantId, SubjectType, SubjectId)` |
 | `PdFeatureTransitions` | `(FeatureTrackId, CreationTime)`, `(TenantId, SubjectType, SubjectId, CreationTime)`, `(TenantId, TrackName, CreationTime)`; no FK to track so history survives deletion |
 
+`PdFeatureTracks.IsDefinedInCode` (`bit`/`bool`, not null, default `false`) marks tracks whose definition comes from
+`ProgressiveDeliveryOptions.Tracks`; **upgrading hosts must add a migration**
+(e.g. `dotnet ef migrations add AddFeatureTrackIsDefinedInCode`); existing rows become admin-managed until the next
+seed adopts the ones still defined in code.
+
 ### Subject type and id casing
 
 `SubjectType` and `SubjectId` are compared ordinally by the library (repository lookups, cache keys, rollout
@@ -62,5 +67,12 @@ The module uses the `ProgressiveDelivery` connection string name and falls back 
 ## Seeding
 
 `ProgressiveDeliveryOptions.Tracks` definitions are applied by `ProgressiveDeliveryDataSeedContributor` whenever
-`IDataSeeder.SeedAsync()` runs (the ABP `DbMigrator` does this). Seeding is idempotent: missing tracks are created,
-missing higher levels are appended, and the official level is only set when the track is brand new.
+`IDataSeeder.SeedAsync()` runs (the ABP `DbMigrator` does this). Definitions are validated at startup (duplicate,
+non-contiguous or negative level numbers, or an out-of-range `InitialOfficialLevel`, throw before anything is
+written). A missing track is created; an existing, unmarked track with the same name is adopted
+(`IsDefinedInCode = true`). Re-seeding upserts the definition — display name, description, and level fields — and
+only writes and notifies when something actually changed; missing higher levels are appended; a level present in the
+database but absent from code is kept, with a warning. Operational state (official level, enabled, rollouts,
+assignments) is never changed after creation. Tracks previously defined in code but removed from `options.Tracks`
+are retired (`IsDefinedInCode = false`, with a warning), never deleted; an empty `options.Tracks` retires nothing.
+Seeding is host-only (tenant seeding is a no-op).

@@ -32,6 +32,7 @@ public static class ProgressiveDeliveryDbContextModelCreatingExtensions
             b.Property(x => x.OfficialLevel).IsRequired();
             b.Property(x => x.HighestAvailableLevel).IsRequired();
             b.Property(x => x.IsEnabled).IsRequired();
+            b.Property(x => x.IsDefinedInCode).IsRequired();
 
             b.HasMany(x => x.Levels).WithOne().HasForeignKey(x => x.FeatureTrackId).IsRequired().OnDelete(DeleteBehavior.Cascade);
             b.HasMany(x => x.Rollouts).WithOne().HasForeignKey(x => x.FeatureTrackId).IsRequired().OnDelete(DeleteBehavior.Cascade);

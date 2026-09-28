@@ -15,6 +15,7 @@
     var canOverride = await AuthorizationService.IsGrantedAsync(ProgressiveDeliveryPermissions.Assignments.Override);
     var canViewHistory = await AuthorizationService.IsGrantedAsync(ProgressiveDeliveryPermissions.Telemetry);
     var track = Model.Track;
+    var isDefinedInCode = track.IsDefinedInCode;
 }
 
 @section styles {
@@ -31,9 +32,7 @@
      data-official-level="@track.OfficialLevel"
      data-highest-level="@track.HighestAvailableLevel"
      data-is-enabled="@track.IsEnabled.ToString().ToLowerInvariant()"
-     data-concurrency-stamp="@track.ConcurrencyStamp"
-     data-display-name="@track.DisplayName"
-     data-description="@track.Description">
+     data-concurrency-stamp="@track.ConcurrencyStamp">
 
     <abp-card class="mb-3">
         <abp-card-header>
@@ -49,16 +48,27 @@
                         {
                             <span class="badge bg-secondary-subtle text-secondary ms-2">@L["Disabled"]</span>
                         }
+                        @if (isDefinedInCode)
+                        {
+                            <span class="badge bg-info-subtle text-info-emphasis ms-2" id="DefinedInCodeBadge">@L["DefinedInCode"]</span>
+                        }
                     </abp-card-title>
                     @if (!string.IsNullOrWhiteSpace(track.Description))
                     {
                         <p class="text-muted small mb-0">@track.Description</p>
                     }
+                    @if (isDefinedInCode)
+                    {
+                        <p class="text-muted small mb-0">@L["DefinedInCodeHint"]</p>
+                    }
                 </abp-column>
                 <abp-column size-md="_4" class="text-end">
-                    @if (canManageTracks)
+                    @if (canManageTracks && !isDefinedInCode)
                     {
                         <abp-button id="EditTrackButton" text="@L["EditTrack"].Value" icon="pen" button-type="Outline_Secondary" size="Small" />
+                    }
+                    @if (canManageTracks)
+                    {
                         <abp-button id="PromoteButton" text="@L["SetOfficialLevel"].Value" icon="arrow-up" button-type="Primary" size="Small" />
                     }
                 </abp-column>
@@ -78,7 +88,7 @@
                 <abp-tab name="levels" title="@L["Levels"].Value" active="true">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <p class="text-muted small mb-0">@L["LevelsIntro"]</p>
-                        @if (canManageLevels)
+                        @if (canManageLevels && !isDefinedInCode)
                         {
                             <abp-button id="AddLevelButton" text="@L["AddLevel"].Value" icon="plus" button-type="Outline_Primary" size="Small" />
                         }
@@ -110,7 +120,7 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        @if (canManageLevels)
+                                        @if (canManageLevels && !isDefinedInCode)
                                         {
                                             <button type="button" class="btn btn-sm btn-outline-secondary pd-edit-level" data-level="@level.Level"><i class="fa fa-pen"></i> @L["Edit"]</button>
                                         }
@@ -214,13 +224,16 @@
                                 </div>
                                 <button type="button" id="ToggleEnabledButton" class="btn btn-outline-warning btn-sm">@(track.IsEnabled ? L["DisableTrack"] : L["EnableTrack"])</button>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>@L["DeleteTrack"]</strong>
-                                    <div class="text-muted small">@L["DeleteTrackHelp"]</div>
+                            @if (!isDefinedInCode)
+                            {
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>@L["DeleteTrack"]</strong>
+                                        <div class="text-muted small">@L["DeleteTrackHelp"]</div>
+                                    </div>
+                                    <button type="button" id="DeleteTrackButton" class="btn btn-outline-danger btn-sm">@L["DeleteTrack"]</button>
                                 </div>
-                                <button type="button" id="DeleteTrackButton" class="btn btn-outline-danger btn-sm">@L["DeleteTrack"]</button>
-                            </div>
+                            }
                         </div>
                     </abp-tab>
                 }

@@ -37,8 +37,11 @@ public class ProgressiveDeliveryOptions
     public Dictionary<string, int> LevelCaps { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Code-first track definitions seeded into the database by <see cref="ProgressiveDeliveryDataSeedContributor"/>.
-    /// Existing tracks are never lowered or renamed; missing tracks and missing higher levels are created.
+    /// Code-first track definitions upserted into the database by <see cref="ProgressiveDeliveryDataSeedContributor"/>
+    /// on every seed. The definition (display name, description, level descriptions, support descriptions, fallback
+    /// policy, performance flag) follows code and missing higher levels are appended; operational state (official
+    /// level, enabled, rollouts, assignments) is never changed after creation. Tracks removed from code are retired
+    /// (marked no longer defined in code), never deleted.
     /// </summary>
     public FeatureTrackDefinitionCollection Tracks { get; } = [];
 }

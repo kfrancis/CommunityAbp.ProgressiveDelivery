@@ -6,6 +6,8 @@ namespace CommunityAbp.ProgressiveDelivery.Tracks;
 /// <summary>
 /// Track and level management. Reading requires <c>ProgressiveDelivery.Tracks</c>; writing requires
 /// <c>ProgressiveDelivery.Tracks.Manage</c> (tracks, official level) or <c>ProgressiveDelivery.Levels.Manage</c> (levels).
+/// Definition changes (display name, description, levels, delete) are rejected with
+/// <c>ProgressiveDelivery:TrackDefinedInCode</c> for tracks defined in code.
 /// </summary>
 public interface IFeatureTrackAppService : IApplicationService
 {
@@ -18,6 +20,8 @@ public interface IFeatureTrackAppService : IApplicationService
     Task<FeatureTrackDto> CreateAsync(CreateFeatureTrackDto input);
 
     Task<FeatureTrackDto> UpdateAsync(Guid id, UpdateFeatureTrackDto input);
+
+    Task<FeatureTrackDto> SetEnabledAsync(Guid id, SetFeatureTrackEnabledDto input);
 
     Task DeleteAsync(Guid id);
 
