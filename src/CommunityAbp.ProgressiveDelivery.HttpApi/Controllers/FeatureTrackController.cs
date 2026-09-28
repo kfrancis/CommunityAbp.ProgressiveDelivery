@@ -31,6 +31,9 @@ public class FeatureTrackController : ProgressiveDeliveryController, IFeatureTra
     [HttpPut("{id}")]
     public Task<FeatureTrackDto> UpdateAsync(Guid id, UpdateFeatureTrackDto input) => _service.UpdateAsync(id, input);
 
+    [HttpPut("{id}/enabled")]
+    public Task<FeatureTrackDto> SetEnabledAsync(Guid id, SetFeatureTrackEnabledDto input) => _service.SetEnabledAsync(id, input);
+
     [HttpDelete("{id}")]
     public Task DeleteAsync(Guid id) => _service.DeleteAsync(id);
 

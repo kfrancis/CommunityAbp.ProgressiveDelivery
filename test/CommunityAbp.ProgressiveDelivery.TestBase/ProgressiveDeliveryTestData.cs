@@ -19,4 +19,7 @@ public static class ProgressiveDeliveryTestData
 
     /// <summary>Levels 0..1, official 0, disabled.</summary>
     public const string DisabledTrack = "Test.Disabled";
+
+    /// <summary>Configured via ProgressiveDeliveryOptions.Tracks in the Application and Web test modules. Levels 0..2.</summary>
+    public const string CodeDefinedTrack = "Code.Checkout";
 }

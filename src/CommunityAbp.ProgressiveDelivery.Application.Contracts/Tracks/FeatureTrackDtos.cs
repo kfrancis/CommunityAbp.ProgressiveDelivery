@@ -135,3 +135,10 @@ public class SetOfficialLevelDto
     [StringLength(ProgressiveDeliveryConsts.MaxReasonLength)]
     public string? Reason { get; set; }
 }
+
+public class SetFeatureTrackEnabledDto
+{
+    public bool IsEnabled { get; set; }
+
+    public string? ConcurrencyStamp { get; set; }
+}

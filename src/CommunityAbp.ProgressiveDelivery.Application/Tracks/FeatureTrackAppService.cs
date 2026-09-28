@@ -1,5 +1,6 @@
 using CommunityAbp.ProgressiveDelivery.Permissions;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 
 namespace CommunityAbp.ProgressiveDelivery.Tracks;
@@ -53,7 +54,41 @@ public class FeatureTrackAppService : ProgressiveDeliveryAppServiceBase, IFeatur
             track.ConcurrencyStamp = input.ConcurrencyStamp;
         }
 
-        track.SetDisplayName(input.DisplayName).SetDescription(input.Description);
+        if (track.IsDefinedInCode)
+        {
+            if (!TextEquals(input.DisplayName, track.DisplayName) || !TextEquals(input.Description, track.Description))
+            {
+                CheckDefinitionEditable(track);
+            }
+        }
+        else
+        {
+            track.SetDisplayName(input.DisplayName).SetDescription(input.Description);
+        }
+
+        if (input.IsEnabled)
+        {
+            track.Enable();
+        }
+        else
+        {
+            track.Disable();
+        }
+
+        await _trackManager.UpdateAsync(track);
+        return ObjectMapper.Map<FeatureTrack, FeatureTrackDto>(track);
+    }
+
+    [Authorize(ProgressiveDeliveryPermissions.Tracks.Manage)]
+    public virtual async Task<FeatureTrackDto> SetEnabledAsync(Guid id, SetFeatureTrackEnabledDto input)
+    {
+        var track = await _trackRepository.GetAsync(id, includeDetails: true);
+
+        if (!string.IsNullOrEmpty(input.ConcurrencyStamp))
+        {
+            track.ConcurrencyStamp = input.ConcurrencyStamp;
+        }
+
         if (input.IsEnabled)
         {
             track.Enable();
@@ -71,6 +106,7 @@ public class FeatureTrackAppService : ProgressiveDeliveryAppServiceBase, IFeatur
     public virtual async Task DeleteAsync(Guid id)
     {
         var track = await _trackRepository.GetAsync(id, includeDetails: true);
+        CheckDefinitionEditable(track);
         await _trackManager.DeleteAsync(track);
     }
 
@@ -86,6 +122,7 @@ public class FeatureTrackAppService : ProgressiveDeliveryAppServiceBase, IFeatur
     public virtual async Task<FeatureLevelDto> AddLevelAsync(Guid id, AddFeatureLevelDto input)
     {
         var track = await _trackRepository.GetAsync(id, includeDetails: true);
+        CheckDefinitionEditable(track);
         var level = await _trackManager.AddLevelAsync(track, input.Level, input.Description, input.SupportDescription, input.IsPerformanceSensitive, input.FallbackPolicy);
         return ObjectMapper.Map<FeatureLevel, FeatureLevelDto>(level);
     }
@@ -94,6 +131,7 @@ public class FeatureTrackAppService : ProgressiveDeliveryAppServiceBase, IFeatur
     public virtual async Task<FeatureLevelDto> UpdateLevelAsync(Guid id, int level, UpdateFeatureLevelDto input)
     {
         var track = await _trackRepository.GetAsync(id, includeDetails: true);
+        CheckDefinitionEditable(track);
         var featureLevel = track.GetLevel(level)
             .SetDescription(input.Description)
             .SetSupportDescription(input.SupportDescription)
@@ -103,4 +141,15 @@ public class FeatureTrackAppService : ProgressiveDeliveryAppServiceBase, IFeatur
         await _trackManager.UpdateAsync(track);
         return ObjectMapper.Map<FeatureLevel, FeatureLevelDto>(featureLevel);
     }
+
+    protected virtual void CheckDefinitionEditable(FeatureTrack track)
+    {
+        if (track.IsDefinedInCode)
+        {
+            throw new BusinessException(ProgressiveDeliveryErrorCodes.TrackDefinedInCode).WithData("Name", track.Name);
+        }
+    }
+
+    private static bool TextEquals(string? left, string? right)
+        => string.Equals(string.IsNullOrEmpty(left) ? null : left, string.IsNullOrEmpty(right) ? null : right, StringComparison.Ordinal);
 }
