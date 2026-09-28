@@ -1,5 +1,6 @@
 using System.Linq.Dynamic.Core;
 using CommunityAbp.ProgressiveDelivery.Assignments;
+using CommunityAbp.ProgressiveDelivery.Subjects;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -15,6 +16,9 @@ public class EfCoreFeatureAssignmentRepository : EfCoreRepository<IProgressiveDe
 
     public virtual async Task<FeatureAssignment?> FindAsync(Guid featureTrackId, string subjectType, string subjectId, CancellationToken cancellationToken = default)
     {
+        subjectType = FeatureSubject.NormalizeType(subjectType);
+        subjectId = FeatureSubject.NormalizeId(subjectId);
+
         return await (await GetQueryableAsync())
             .FirstOrDefaultAsync(
                 a => a.FeatureTrackId == featureTrackId && a.SubjectType == subjectType && a.SubjectId == subjectId,
@@ -56,11 +60,13 @@ public class EfCoreFeatureAssignmentRepository : EfCoreRepository<IProgressiveDe
 
         if (!string.IsNullOrWhiteSpace(subjectType))
         {
+            subjectType = FeatureSubject.NormalizeType(subjectType);
             query = query.Where(a => a.SubjectType == subjectType);
         }
 
         if (!string.IsNullOrWhiteSpace(subjectId))
         {
+            subjectId = FeatureSubject.NormalizeId(subjectId);
             query = query.Where(a => a.SubjectId == subjectId);
         }
 

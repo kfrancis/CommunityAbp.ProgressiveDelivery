@@ -30,8 +30,12 @@ public interface IFeatureAssignmentCache
 
     Task InvalidateAsync(Guid featureTrackId, FeatureSubject subject, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Keys compare type and id ordinally, exactly like the repository lookup behind them. Upper-casing only the
+    /// key would let two subjects the database keeps apart (custom types differing in case) share one entry.
+    /// </summary>
     static string BuildKey(Guid featureTrackId, string subjectType, string subjectId)
-        => $"{featureTrackId:N}:{subjectType.ToUpperInvariant()}:{subjectId}";
+        => $"{featureTrackId:N}:{FeatureSubject.NormalizeType(subjectType)}:{FeatureSubject.NormalizeId(subjectId)}";
 }
 
 public class FeatureAssignmentCache : IFeatureAssignmentCache, ITransientDependency

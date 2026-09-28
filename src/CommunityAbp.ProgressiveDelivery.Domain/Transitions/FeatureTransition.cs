@@ -1,3 +1,4 @@
+using CommunityAbp.ProgressiveDelivery.Subjects;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
@@ -63,8 +64,8 @@ public class FeatureTransition : CreationAuditedAggregateRoot<Guid>, IMultiTenan
         TransitionType = transitionType;
         FromLevel = fromLevel;
         ToLevel = toLevel;
-        SubjectType = Check.Length(subjectType, nameof(subjectType), ProgressiveDeliveryConsts.MaxSubjectTypeLength);
-        SubjectId = Check.Length(subjectId, nameof(subjectId), ProgressiveDeliveryConsts.MaxSubjectIdLength);
+        SubjectType = Check.Length(FeatureSubject.NormalizeType(subjectType), nameof(subjectType), ProgressiveDeliveryConsts.MaxSubjectTypeLength);
+        SubjectId = Check.Length(FeatureSubject.NormalizeId(subjectId), nameof(subjectId), ProgressiveDeliveryConsts.MaxSubjectIdLength);
         TenantId = tenantId;
         Reason = Truncate(reason, ProgressiveDeliveryConsts.MaxReasonLength);
         CorrelationId = Truncate(correlationId, ProgressiveDeliveryConsts.MaxCorrelationIdLength);

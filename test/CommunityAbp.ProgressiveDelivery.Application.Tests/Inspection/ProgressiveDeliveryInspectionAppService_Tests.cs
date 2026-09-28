@@ -11,6 +11,7 @@ public class ProgressiveDeliveryInspectionAppService_Tests : ProgressiveDelivery
 {
     private const string Track = ProgressiveDeliveryTestData.ClaimsTrack;
     private static readonly string UserId = ProgressiveDeliveryTestData.UserId.ToString("D");
+    private static readonly string HexUserId = ProgressiveDeliveryTestData.HexUserId.ToString("D");
 
     private IProgressiveDeliveryInspectionAppService Inspection => GetRequiredService<IProgressiveDeliveryInspectionAppService>();
 
@@ -46,6 +47,59 @@ public class ProgressiveDeliveryInspectionAppService_Tests : ProgressiveDelivery
         result.Differences[0].SupportDescription.ShouldNotBeNull().ShouldContain("cache");
         result.Differences[1].Description.ShouldBe("Parallel validation");
         result.Differences[1].IsPerformanceSensitive.ShouldBeTrue();
+    }
+
+    [Test]
+    public async Task Inspection_Matches_Runtime_Assignment_Regardless_Of_Guid_Casing()
+    {
+        // The runtime stores user subjects as lower-case "D" GUIDs; an admin typically pastes the id from a
+        // user table or SSMS in upper case, sometimes with braces or stray whitespace.
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var track = await GetRequiredService<FeatureTrackManager>().GetByNameAsync(Track);
+            await GetRequiredService<FeatureAssignmentManager>().AssignAsync(
+                track, FeatureSubject.User(ProgressiveDeliveryTestData.HexUserId), 3, FeatureTransitionType.ManualOverride);
+        });
+
+        foreach (var pasted in new[] { HexUserId.ToUpperInvariant(), $"  {{{HexUserId.ToUpperInvariant()}}} " })
+        {
+            var result = await Inspection.InspectAsync(new InspectSubjectInput
+            {
+                TrackName = Track,
+                SubjectType = "user",
+                SubjectId = pasted
+            });
+
+            result.AssignedLevel.ShouldBe(3);
+            result.SubjectType.ShouldBe(FeatureSubjectTypes.User);
+            result.SubjectId.ShouldBe(HexUserId);
+        }
+
+        var assignments = await Assignments.GetListAsync(new GetFeatureAssignmentsInput { SubjectType = "USER", SubjectId = HexUserId.ToUpperInvariant() });
+        assignments.TotalCount.ShouldBe(1);
+
+        var transitions = await GetRequiredService<IFeatureTransitionAppService>().GetListAsync(new GetFeatureTransitionsInput { SubjectType = "User", SubjectId = HexUserId.ToUpperInvariant() });
+        transitions.TotalCount.ShouldBe(1);
+    }
+
+    [Test]
+    public async Task Upper_Case_Override_Applies_To_The_Runtime_User()
+    {
+        await Assignments.OverrideAsync(new OverrideFeatureAssignmentDto
+        {
+            TrackName = Track,
+            SubjectType = FeatureSubjectTypes.User,
+            SubjectId = HexUserId.ToUpperInvariant(),
+            Level = 3
+        });
+
+        var assignment = await WithUnitOfWorkAsync(async () =>
+        {
+            var track = await GetRequiredService<FeatureTrackManager>().GetByNameAsync(Track);
+            return await GetRequiredService<FeatureAssignmentManager>().FindAsync(track, FeatureSubject.User(ProgressiveDeliveryTestData.HexUserId));
+        });
+
+        assignment.ShouldNotBeNull().SubjectId.ShouldBe(HexUserId);
     }
 
     [Test]

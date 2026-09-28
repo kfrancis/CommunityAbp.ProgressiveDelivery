@@ -39,6 +39,22 @@ Prefix and schema come from `ProgressiveDeliveryDbProperties.DbTablePrefix` (`Pd
 | `PdFeatureAssignments` | unique `(TenantId, FeatureTrackId, SubjectType, SubjectId)`; `(TenantId, SubjectType, SubjectId)` |
 | `PdFeatureTransitions` | `(FeatureTrackId, CreationTime)`, `(TenantId, SubjectType, SubjectId, CreationTime)`, `(TenantId, TrackName, CreationTime)`; no FK to track so history survives deletion |
 
+### Subject type and id casing
+
+`SubjectType` and `SubjectId` are compared ordinally by the library (repository lookups, cache keys, rollout
+hashing), so the stored value must not depend on how a caller typed it. Every value is canonicalised by
+`FeatureSubject.NormalizeType` / `FeatureSubject.NormalizeId` before it is written or queried:
+
+- surrounding whitespace is trimmed;
+- well-known types (`User`, `Tenant`, `Client`, `Anonymous`) are matched case-insensitively and stored as the constant;
+- GUID ids (`D`, `B` or `P` format, any casing) are stored as lower-case `D` format, the same as
+  `FeatureSubject.User(Guid)`. Other ids, and custom types, are opaque and case-sensitive.
+
+Rows written by versions before this rule (for example an admin override entered with an upper-case GUID) are not
+rewritten automatically. On a case-sensitive database they are invisible to the runtime; on SQL Server's default
+case-insensitive collation they still match. To repair them, lower-case GUID subject ids in `PdFeatureAssignments`
+and `PdFeatureTransitions` (deleting any assignment row that would then duplicate an existing lower-case one).
+
 ## Connection string
 
 The module uses the `ProgressiveDelivery` connection string name and falls back to `Default`.
