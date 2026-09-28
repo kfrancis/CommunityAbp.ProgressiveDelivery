@@ -87,9 +87,7 @@ $(function () {
         var message = isEnabled ? l('DisableTrackConfirmationMessage', trackName) : l('EnableTrackConfirmationMessage', trackName);
         abp.message.confirm(message).then(function (confirmed) {
             if (!confirmed) { return; }
-            trackService.update(trackId, {
-                displayName: $root.data('display-name') || null,
-                description: $root.data('description') || null,
+            trackService.setEnabled(trackId, {
                 isEnabled: !isEnabled,
                 concurrencyStamp: $root.data('concurrency-stamp')
             }).then(function () {

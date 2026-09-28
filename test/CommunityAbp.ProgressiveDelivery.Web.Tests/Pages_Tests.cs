@@ -36,6 +36,26 @@ public class Pages_Tests : ProgressiveDeliveryWebTestBase
         html.ShouldContain("AssignmentsTable");
         html.ShouldContain("HistoryTable");
         html.ShouldContain("DeleteTrackButton");
+        html.ShouldContain("EditTrackButton");
+        html.ShouldContain("AddLevelButton");
+        html.ShouldNotContain("DefinedInCodeBadge");
+    }
+
+    [Test]
+    public async Task Track_Detail_For_Code_Defined_Track_Hides_Definition_Controls()
+    {
+        var track = await GetRequiredService<IFeatureTrackAppService>().GetByNameAsync(ProgressiveDeliveryTestData.CodeDefinedTrack);
+
+        var html = await GetPageAsync($"/ProgressiveDelivery/Tracks/Detail?id={track.Id}");
+
+        html.ShouldContain("DefinedInCodeBadge");
+        html.ShouldContain("This track&#x27;s definition is managed in code."); // Razor HTML-encodes the apostrophe
+        html.ShouldContain("PromoteButton");
+        html.ShouldContain("ToggleEnabledButton");
+        html.ShouldNotContain("EditTrackButton");
+        html.ShouldNotContain("AddLevelButton");
+        html.ShouldNotContain("pd-edit-level");
+        html.ShouldNotContain("DeleteTrackButton");
     }
 
     [Test]

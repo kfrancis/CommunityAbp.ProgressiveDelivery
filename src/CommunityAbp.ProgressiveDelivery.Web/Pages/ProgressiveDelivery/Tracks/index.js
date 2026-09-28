@@ -43,14 +43,14 @@ $(function () {
                         },
                         {
                             text: l('Edit'),
-                            visible: canManage,
+                            visible: function (record) { return canManage && !record.isDefinedInCode; },
                             action: function (data) {
                                 editModal.open({ id: data.record.id });
                             }
                         },
                         {
                             text: l('Delete'),
-                            visible: canManage,
+                            visible: function (record) { return canManage && !record.isDefinedInCode; },
                             confirmMessage: function (data) {
                                 return l('TrackDeletionConfirmationMessage', data.record.name);
                             },
@@ -68,8 +68,9 @@ $(function () {
                 title: l('Track'),
                 data: 'name',
                 render: function (data, type, row) {
+                    var badge = row.isDefinedInCode ? ' <span class="badge bg-info-subtle text-info-emphasis ms-1">' + l('DefinedInCode') + '</span>' : '';
                     var display = row.displayName ? '<div class="text-muted small">' + $('<div/>').text(row.displayName).html() + '</div>' : '';
-                    return '<a class="pd-mono fw-semibold" href="' + abp.appPath + 'ProgressiveDelivery/Tracks/Detail?id=' + row.id + '">' + $('<div/>').text(data).html() + '</a>' + display;
+                    return '<a class="pd-mono fw-semibold" href="' + abp.appPath + 'ProgressiveDelivery/Tracks/Detail?id=' + row.id + '">' + $('<div/>').text(data).html() + '</a>' + badge + display;
                 }
             },
             {

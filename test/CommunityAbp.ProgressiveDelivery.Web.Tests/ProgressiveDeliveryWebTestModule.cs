@@ -1,4 +1,5 @@
 using CommunityAbp.ProgressiveDelivery.EntityFrameworkCore;
+using CommunityAbp.ProgressiveDelivery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,14 @@ public class ProgressiveDeliveryWebTestModule : AbpModule
 
         // No npm client libraries in the test host: emit individual tags instead of bundling (missing files only log).
         Configure<AbpBundlingOptions>(options => options.Mode = BundlingMode.None);
+
+        Configure<ProgressiveDeliveryOptions>(options =>
+        {
+            options.Tracks.Add(ProgressiveDeliveryTestData.CodeDefinedTrack, "Checkout", "Code-defined checkout")
+                .WithLevel(0, "Original checkout")
+                .WithLevel(1, "One-page checkout", "Single page.", FallbackPolicy.SafeRead)
+                .WithLevel(2, "Express checkout", "Adds express pay.", FallbackPolicy.DemoteOnly);
+        });
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
