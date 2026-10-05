@@ -10,7 +10,31 @@
             <div class="mb-2"><span class="pd-mono fw-semibold">@Model.Input.TrackName</span> <span class="text-muted small">@L["CurrentOfficialLevel", Model.OfficialLevel]</span></div>
             <abp-input asp-for="Input.TrackName" />
             <abp-select asp-for="Input.SubjectType" asp-items="Model.SubjectTypeItems" label="@L["SubjectType"].Value" />
-            <abp-input asp-for="Input.SubjectId" label="@L["SubjectId"].Value" />
+            @if (Model.IsHost)
+            {
+                <div class="mb-3 pd-tenant-field">
+                    <label class="form-label" for="Input_TenantId">@L["TenantId"]</label>
+                    <select asp-for="Input.TenantId" class="form-select pd-tenant-picker">
+                        <option></option>
+                        @if (Model.Input.TenantId is not null)
+                        {
+                            <option value="@Model.Input.TenantId" selected>@(Model.TenantDisplayName ?? Model.Input.TenantId.ToString())</option>
+                        }
+                    </select>
+                    <div class="form-text">@L["TenantPickerHelp"]</div>
+                </div>
+            }
+            <div class="mb-3">
+                <label class="form-label" for="Input_SubjectId">@L["Subject"]</label>
+                <select asp-for="Input.SubjectId" class="form-select pd-subject-picker">
+                    @if (!string.IsNullOrEmpty(Model.Input.SubjectId))
+                    {
+                        <option value="@Model.Input.SubjectId" selected>@(Model.SubjectDisplayName ?? Model.Input.SubjectId)</option>
+                    }
+                </select>
+                <div class="form-text">@L["SubjectPickerHelp"]</div>
+                <span asp-validation-for="Input.SubjectId" class="text-danger"></span>
+            </div>
             <abp-select asp-for="Input.Level" asp-items="Model.LevelItems" label="@L["Level"].Value" info="@L["OverrideLevelHelp"].Value" />
             <abp-input asp-for="Input.Reason" label="@L["Reason"].Value" />
             <abp-input asp-for="Input.IsEmergency" label="@L["IsEmergency"].Value" info="@L["IsEmergencyHelp"].Value" />

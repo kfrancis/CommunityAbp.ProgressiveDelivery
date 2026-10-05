@@ -14,6 +14,9 @@ public class FeatureAssignmentDto : AuditedEntityDto<Guid>
 
     public string SubjectId { get; set; } = default!;
 
+    /// <summary>Human-readable subject name (user name, tenant name, ...) when a lookup provider knows the subject.</summary>
+    public string? SubjectDisplayName { get; set; }
+
     public int AssignedLevel { get; set; }
 
     public string? AssignmentReason { get; set; }

@@ -21,4 +21,14 @@ public interface IFeatureAssignmentRepository : IRepository<FeatureAssignment, G
         string? subjectType = null,
         string? subjectId = null,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Distinct subject ids of <paramref name="subjectType"/> that have at least one assignment, optionally
+    /// containing <paramref name="filter"/>. Feeds subject pickers for types without a lookup provider.
+    /// </summary>
+    Task<List<string>> GetSubjectIdsAsync(
+        string subjectType,
+        string? filter = null,
+        int maxResultCount = int.MaxValue,
+        CancellationToken cancellationToken = default);
 }

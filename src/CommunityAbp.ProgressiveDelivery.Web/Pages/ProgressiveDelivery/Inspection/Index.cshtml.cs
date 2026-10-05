@@ -11,11 +11,13 @@ namespace CommunityAbp.ProgressiveDelivery.Web.Pages.ProgressiveDelivery.Inspect
 public class IndexModel : ProgressiveDeliveryPageModel
 {
     private readonly IProgressiveDeliveryInspectionAppService _inspectionAppService;
+    private readonly IFeatureSubjectLookupAppService _lookupAppService;
     private readonly ICurrentTenant _currentTenant;
 
-    public IndexModel(IProgressiveDeliveryInspectionAppService inspectionAppService, ICurrentTenant currentTenant)
+    public IndexModel(IProgressiveDeliveryInspectionAppService inspectionAppService, IFeatureSubjectLookupAppService lookupAppService, ICurrentTenant currentTenant)
     {
         _inspectionAppService = inspectionAppService;
+        _lookupAppService = lookupAppService;
         _currentTenant = currentTenant;
     }
 
@@ -36,12 +38,22 @@ public class IndexModel : ProgressiveDeliveryPageModel
 
     public bool HasSearched { get; private set; }
 
+    /// <summary>User name, tenant name, ... of the inspected subject when a lookup provider knows it.</summary>
+    public string? SubjectDisplayName { get; private set; }
+
+    public string? SubjectDetail { get; private set; }
+
+    public string? TenantDisplayName { get; private set; }
+
     public List<SubjectFeatureInspectionDto> Results { get; private set; } = [];
 
     public List<SelectListItem> SubjectTypeItems { get; private set; } = [];
 
     public async Task OnGetAsync()
     {
+        // The form is a GET search; a missing query value is not a validation error worth showing.
+        ModelState.Clear();
+
         var types = new List<string> { FeatureSubjectTypes.User, FeatureSubjectTypes.Tenant, FeatureSubjectTypes.Client, FeatureSubjectTypes.Anonymous };
         if (!string.IsNullOrWhiteSpace(SubjectType) && !types.Contains(SubjectType))
         {
@@ -49,6 +61,21 @@ public class IndexModel : ProgressiveDeliveryPageModel
         }
 
         SubjectTypeItems = types.Select(t => new SelectListItem(t, t, t == SubjectType)).ToList();
+
+        // A tenant subject lives inside itself (FeatureSubject.Tenant), so its tenant is implied by its id.
+        if (IsHost && FeatureSubject.NormalizeType(SubjectType) == FeatureSubjectTypes.Tenant && Guid.TryParse(SubjectId, out var subjectTenantId))
+        {
+            TenantId = subjectTenantId;
+        }
+
+        if (IsHost && TenantId is { } tenantId)
+        {
+            TenantDisplayName = (await _lookupAppService.FindAsync(new SubjectRefDto
+            {
+                SubjectType = FeatureSubjectTypes.Tenant,
+                SubjectId = tenantId.ToString("D")
+            }))?.DisplayName;
+        }
 
         if (string.IsNullOrWhiteSpace(SubjectId))
         {
@@ -63,6 +90,12 @@ public class IndexModel : ProgressiveDeliveryPageModel
             UseCurrentTenant = !(IsHost && TenantId is not null),
             TenantId = TenantId
         };
+
+        if (await _lookupAppService.FindAsync(subject) is { } found)
+        {
+            SubjectDisplayName = found.DisplayName;
+            SubjectDetail = found.Detail;
+        }
 
         if (!string.IsNullOrWhiteSpace(TrackName))
         {

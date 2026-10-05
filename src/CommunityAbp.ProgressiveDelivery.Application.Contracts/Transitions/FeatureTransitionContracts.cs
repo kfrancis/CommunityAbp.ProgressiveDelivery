@@ -16,6 +16,9 @@ public class FeatureTransitionDto : CreationAuditedEntityDto<Guid>
 
     public string? SubjectId { get; set; }
 
+    /// <summary>Human-readable subject name (user name, tenant name, ...) when a lookup provider knows the subject.</summary>
+    public string? SubjectDisplayName { get; set; }
+
     public int? FromLevel { get; set; }
 
     public int ToLevel { get; set; }

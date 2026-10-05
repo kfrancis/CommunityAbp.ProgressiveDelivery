@@ -73,6 +73,16 @@ public class Pages_Tests : ProgressiveDeliveryWebTestBase
     }
 
     [Test]
+    public async Task Override_Modal_Renders_Subject_And_Tenant_Pickers()
+    {
+        var html = await GetPageAsync($"/ProgressiveDelivery/Assignments/OverrideModal?trackName={ProgressiveDeliveryTestData.ClaimsTrack}&subjectType=User&subjectId={UserId}");
+
+        html.ShouldContain("pd-subject-picker");
+        html.ShouldContain($"<option value=\"{UserId}\" selected");
+        html.ShouldContain("pd-tenant-picker");
+    }
+
+    [Test]
     public async Task Inspection_Page_Shows_Differences_For_Experimental_Subject()
     {
         await GetRequiredService<IFeatureAssignmentAppService>().OverrideAsync(new OverrideFeatureAssignmentDto

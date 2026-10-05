@@ -239,6 +239,7 @@ The pipeline lives in `IFeatureLevelResolver` and is built from replaceable serv
 | Concern                  | Interface                          | Default                                   |
 |--------------------------|------------------------------------|-------------------------------------------|
 | Who is the subject?      | `IFeatureSubjectResolver`          | current user in current tenant            |
+| Finding subjects (admin) | `IFeatureSubjectLookupProvider`    | users via ABP user lookup; tenants via `ITenantStore` |
 | Sticky assignment store  | `IFeatureAssignmentCache` + repo   | ABP distributed cache over EF Core        |
 | Track definitions        | `IFeatureTrackDefinitionCache`     | ABP distributed cache over EF Core        |
 | Cohort membership        | `IRolloutCohortAllocator`          | SHA-256 stable hash, 10 000 buckets       |
@@ -422,6 +423,38 @@ enable/disable, rollouts, overrides); editing, adding levels and deleting are hi
 Styling uses the active theme's Bootstrap variables (Basic and LeptonX). The design source lives in
 [docs/design](docs/design).
 
+### Finding subjects without pasting ids
+
+The override modal and the inspection page pick subjects with a search box instead of an id field:
+
+- **Users** by user name, name or email (or a pasted id), through ABP's `IExternalUserLookupServiceProvider`. The
+  Identity module registers one in process (the Identity HTTP API client does in tiered apps); with neither, user
+  ids have to be typed.
+- **Tenants** by name, through `ITenantStore` (Tenant Management, or the configuration store). Tenant callers only
+  ever see their own tenant. Hosts also get a tenant picker to target a user inside a tenant.
+- **Any type**, including clients and custom types, from ids that already have assignments. Any typed value can
+  still be used as the id.
+
+Assignment and transition listings show the subject's name next to its id (`SubjectDisplayName` on the DTOs).
+The API is `GET api/progressive-delivery/subjects/{types|search|find}` (`IFeatureSubjectLookupAppService`,
+`Assignments.View` or `.Override`). To make another subject type searchable, register an
+`IFeatureSubjectLookupProvider`:
+
+```csharp
+public class ClientSubjectLookupProvider : IFeatureSubjectLookupProvider, ITransientDependency
+{
+    public string SubjectType => FeatureSubjectTypes.Client;
+
+    public Task<IReadOnlyList<FeatureSubjectLookupItem>> SearchAsync(string? filter, int maxResultCount, CancellationToken ct = default)
+        => /* query your OpenIddict applications, API keys, ... by name */;
+
+    public Task<FeatureSubjectLookupItem?> FindAsync(string subjectId, CancellationToken ct = default)
+        => /* display name for one client id */;
+}
+```
+
+Providers run inside the subject's tenant (ambient `ICurrentTenant`).
+
 ## Sample host
 
 `sample/` contains an Aspire-orchestrated ABP MVC host with seeded tracks, dev personas (ops / support) and an
@@ -534,6 +567,16 @@ behaviour-changing upgrades are listed here.
   the new column.
 
 See [ADR 0008](docs/adr/0008-code-owns-track-definitions.md) and [docs/database.md](docs/database.md#seeding).
+
+### Subject lookup
+
+- **Dependency:** the Domain package now depends on `Volo.Abp.Users.Domain` (for `IExternalUserLookupServiceProvider`).
+  No schema change.
+- **API:** `IFeatureAssignmentRepository` gained `GetSubjectIdsAsync`; custom repository implementations must add it.
+  `FeatureAssignmentDto` and `FeatureTransitionDto` gained `SubjectDisplayName`.
+- **Behaviour:** when the host overrides a `Tenant` subject from the UI, the assignment is now stored inside that
+  tenant, matching `FeatureSubject.Tenant(id)`. Previously the UI stored it as a host-level subject that the runtime
+  never resolved.
 
 ## Roadmap
 

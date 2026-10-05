@@ -17,6 +17,7 @@ using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Sqlite;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
+using Volo.Abp.MultiTenancy.ConfigurationStore;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
@@ -47,6 +48,17 @@ public class SampleWebModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
 
         Configure<AbpMultiTenancyOptions>(options => options.IsEnabled = false);
+
+        // No Tenant Management in the sample: the configuration tenant store gives the tenant picker something to find.
+        Configure<AbpDefaultTenantStoreOptions>(options =>
+        {
+            options.Tenants =
+            [
+                new TenantConfiguration(new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "lakeside-family-health"),
+                new TenantConfiguration(new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "northgate-pediatrics"),
+                new TenantConfiguration(new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), "riverbend-walk-in")
+            ];
+        });
 
         Configure<AbpDbContextOptions>(options =>
         {

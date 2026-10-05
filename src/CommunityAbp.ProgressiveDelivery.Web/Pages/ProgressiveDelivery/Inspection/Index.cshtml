@@ -13,6 +13,7 @@
 }
 
 @section scripts {
+    <abp-script src="/Pages/ProgressiveDelivery/Shared/subject-picker.js" />
     <abp-script src="/Pages/ProgressiveDelivery/Inspection/index.js" />
 }
 
@@ -24,15 +25,34 @@
                     <abp-select asp-for="SubjectType" asp-items="Model.SubjectTypeItems" label="@L["SubjectType"].Value" />
                 </abp-column>
                 <abp-column size-md="_4">
-                    <abp-input asp-for="SubjectId" label="@L["SubjectId"].Value" info="@L["SubjectIdHelp"].Value" />
+                    <div class="mb-3">
+                        <label class="form-label" for="SubjectId">@L["Subject"]</label>
+                        <select asp-for="SubjectId" class="form-select pd-subject-picker">
+                            @if (!string.IsNullOrWhiteSpace(Model.SubjectId))
+                            {
+                                <option value="@Model.SubjectId" selected>@(Model.SubjectDisplayName ?? Model.SubjectId)</option>
+                            }
+                        </select>
+                        <div class="form-text">@L["SubjectIdHelp"]</div>
+                    </div>
                 </abp-column>
                 <abp-column size-md="_3">
                     <abp-input asp-for="TrackName" label="@L["Track"].Value" info="@L["TrackFilterHelp"].Value" />
                 </abp-column>
                 @if (Model.IsHost)
                 {
-                    <abp-column size-md="_2">
-                        <abp-input asp-for="TenantId" label="@L["TenantId"].Value" info="@L["TenantIdHelp"].Value" />
+                    <abp-column size-md="_2" class="pd-tenant-field">
+                        <div class="mb-3">
+                            <label class="form-label" for="TenantId">@L["TenantId"]</label>
+                            <select asp-for="TenantId" class="form-select pd-tenant-picker">
+                                <option></option>
+                                @if (Model.TenantId is not null)
+                                {
+                                    <option value="@Model.TenantId" selected>@(Model.TenantDisplayName ?? Model.TenantId.ToString())</option>
+                                }
+                            </select>
+                            <div class="form-text">@L["TenantIdHelp"]</div>
+                        </div>
                     </abp-column>
                 }
                 <abp-column size-md="_1" class="d-flex align-items-end pb-3">
@@ -43,6 +63,19 @@
     </abp-card-body>
 </abp-card>
 
+@if (Model.HasSearched && Model.SubjectDisplayName is not null)
+{
+    <div class="mb-3">
+        <span class="text-muted">@Model.SubjectType</span>
+        <span class="fw-semibold">@Model.SubjectDisplayName</span>
+        @if (!string.IsNullOrWhiteSpace(Model.SubjectDetail))
+        {
+            <span class="text-muted small">· @Model.SubjectDetail</span>
+        }
+        <span class="pd-mono small text-muted">@Model.SubjectId</span>
+    </div>
+}
+
 @if (Model.HasSearched && !Model.Results.Any())
 {
     <div class="alert alert-light border">@L["NoTracksToInspect"]</div>
@@ -50,7 +83,7 @@
 
 @foreach (var result in Model.Results)
 {
-    <abp-card class="mb-3 pd-inspect-card" data-track-name="@result.Track" data-subject-type="@result.SubjectType" data-subject-id="@result.SubjectId">
+    <abp-card class="mb-3 pd-inspect-card" data-track-name="@result.Track" data-subject-type="@result.SubjectType" data-subject-id="@result.SubjectId" data-tenant-id="@result.TenantId" data-subject-name="@(Model.SubjectDisplayName ?? result.SubjectId)">
         <abp-card-header>
             <abp-row>
                 <abp-column size-md="_8">
@@ -96,7 +129,7 @@
                 <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["AssignedLevel"]</div><div class="pd-kpi-value">@(result.AssignedLevel?.ToString() ?? "—")</div></div>
                 <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["CohortLevel"]</div><div class="pd-kpi-value">@(result.CohortLevel?.ToString() ?? "—")</div></div>
                 <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["EffectiveLevel"]</div><div class="pd-kpi-value text-info">@result.EffectiveLevel</div></div>
-                <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["TenantId"]</div><div class="pd-kpi-value small">@(result.TenantId?.ToString() ?? L["Host"].Value)</div></div>
+                <div class="pd-inspect-cell"><div class="pd-kpi-label">@L["TenantId"]</div><div class="pd-kpi-value small">@(result.TenantId is null ? L["Host"].Value : Model.TenantDisplayName ?? result.TenantId.ToString())</div></div>
             </div>
 
             @if (result.TrackExists)
