@@ -17,6 +17,7 @@
     <PackageVersion Include="Volo.Abp.Authorization.Abstractions" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.Caching" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.Users.Domain" Version="$(AbpVersion)" />
+    <PackageVersion Include="Volo.Abp.OpenIddict.Domain" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.EventBus" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.Mapperly" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.EntityFrameworkCore" Version="$(AbpVersion)" />

@@ -239,7 +239,7 @@ The pipeline lives in `IFeatureLevelResolver` and is built from replaceable serv
 | Concern                  | Interface                          | Default                                   |
 |--------------------------|------------------------------------|-------------------------------------------|
 | Who is the subject?      | `IFeatureSubjectResolver`          | current user in current tenant            |
-| Finding subjects (admin) | `IFeatureSubjectLookupProvider`    | users via ABP user lookup; tenants via `ITenantStore` |
+| Finding subjects (admin) | `IFeatureSubjectLookupProvider`    | users via ABP user lookup; tenants via `ITenantStore`; clients via the OpenIddict package |
 | Sticky assignment store  | `IFeatureAssignmentCache` + repo   | ABP distributed cache over EF Core        |
 | Track definitions        | `IFeatureTrackDefinitionCache`     | ABP distributed cache over EF Core        |
 | Cohort membership        | `IRolloutCohortAllocator`          | SHA-256 stable hash, 10 000 buckets       |
@@ -432,8 +432,12 @@ The override modal and the inspection page pick subjects with a search box inste
   ids have to be typed.
 - **Tenants** by name, through `ITenantStore` (Tenant Management, or the configuration store). Tenant callers only
   ever see their own tenant. Hosts also get a tenant picker to target a user inside a tenant.
-- **Any type**, including clients and custom types, from ids that already have assignments. Any typed value can
-  still be used as the id.
+- **Clients** by client id or display name from the OpenIddict applications, with the optional
+  `CommunityAbp.ProgressiveDelivery.OpenIddict` package: add `[DependsOn(typeof(ProgressiveDeliveryOpenIddictModule))]`
+  to the host that runs the application layer (it needs the OpenIddict repositories, so the auth server or a host
+  sharing its database). Display names are matched in memory over the first 1 000 applications.
+- **Any type**, including custom types, from ids that already have assignments. Any typed value can still be used
+  as the id.
 
 Assignment and transition listings show the subject's name next to its id (`SubjectDisplayName` on the DTOs).
 The API is `GET api/progressive-delivery/subjects/{types|search|find}` (`IFeatureSubjectLookupAppService`,
@@ -441,15 +445,16 @@ The API is `GET api/progressive-delivery/subjects/{types|search|find}` (`IFeatur
 `IFeatureSubjectLookupProvider`:
 
 ```csharp
-public class ClientSubjectLookupProvider : IFeatureSubjectLookupProvider, ITransientDependency
+[ExposeServices(typeof(IFeatureSubjectLookupProvider))]
+public class DeviceSubjectLookupProvider : IFeatureSubjectLookupProvider, ITransientDependency
 {
-    public string SubjectType => FeatureSubjectTypes.Client;
+    public string SubjectType => "Device";
 
     public Task<IReadOnlyList<FeatureSubjectLookupItem>> SearchAsync(string? filter, int maxResultCount, CancellationToken ct = default)
-        => /* query your OpenIddict applications, API keys, ... by name */;
+        => /* query your device registry by name or serial number */;
 
     public Task<FeatureSubjectLookupItem?> FindAsync(string subjectId, CancellationToken ct = default)
-        => /* display name for one client id */;
+        => /* display name for one device id */;
 }
 ```
 
@@ -517,7 +522,7 @@ Design decisions are recorded in [docs/adr](docs/adr).
 |---------|------------|
 | `CommunityAbp.ProgressiveDelivery.Abstractions` | nothing |
 | `CommunityAbp.ProgressiveDelivery.Domain.Shared` | Abstractions, `Volo.Abp.Validation` |
-| `CommunityAbp.ProgressiveDelivery.Domain` | Domain.Shared, `Volo.Abp.Ddd.Domain`, `Volo.Abp.Caching` |
+| `CommunityAbp.ProgressiveDelivery.Domain` | Domain.Shared, `Volo.Abp.Ddd.Domain`, `Volo.Abp.Caching`, `Volo.Abp.Users.Domain` |
 | `CommunityAbp.ProgressiveDelivery.Application.Contracts` | Domain.Shared, `Volo.Abp.Ddd.Application.Contracts`, `Volo.Abp.Authorization.Abstractions` |
 | `CommunityAbp.ProgressiveDelivery.Application` | Domain, Application.Contracts, `Volo.Abp.Ddd.Application`, `Volo.Abp.Mapperly` |
 | `CommunityAbp.ProgressiveDelivery.EntityFrameworkCore` | Domain, `Volo.Abp.EntityFrameworkCore` |
@@ -526,6 +531,7 @@ Design decisions are recorded in [docs/adr](docs/adr).
 | `CommunityAbp.ProgressiveDelivery.Web` | Application.Contracts, `Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared` |
 | `CommunityAbp.ProgressiveDelivery.AspNetCore` | Domain, `Volo.Abp.AspNetCore` |
 | `CommunityAbp.ProgressiveDelivery.OpenTelemetry` | Abstractions, `Volo.Abp.Core`, `OpenTelemetry.Api` |
+| `CommunityAbp.ProgressiveDelivery.OpenIddict` (optional) | Domain, `Volo.Abp.OpenIddict.Domain` |
 
 ## Permissions
 
@@ -571,6 +577,7 @@ See [ADR 0008](docs/adr/0008-code-owns-track-definitions.md) and [docs/database.
 ### Subject lookup
 
 - **Dependency:** the Domain package now depends on `Volo.Abp.Users.Domain` (for `IExternalUserLookupServiceProvider`).
+  Client lookup is opt-in through the new `CommunityAbp.ProgressiveDelivery.OpenIddict` package.
   No schema change.
 - **API:** `IFeatureAssignmentRepository` gained `GetSubjectIdsAsync`; custom repository implementations must add it.
   `FeatureAssignmentDto` and `FeatureTransitionDto` gained `SubjectDisplayName`.

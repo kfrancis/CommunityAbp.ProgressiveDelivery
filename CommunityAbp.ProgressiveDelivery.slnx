@@ -14,6 +14,7 @@
     <Project Path="src/CommunityAbp.ProgressiveDelivery.EntityFrameworkCore/CommunityAbp.ProgressiveDelivery.EntityFrameworkCore.csproj" />
     <Project Path="src/CommunityAbp.ProgressiveDelivery.HttpApi.Client/CommunityAbp.ProgressiveDelivery.HttpApi.Client.csproj" />
     <Project Path="src/CommunityAbp.ProgressiveDelivery.HttpApi/CommunityAbp.ProgressiveDelivery.HttpApi.csproj" />
+    <Project Path="src/CommunityAbp.ProgressiveDelivery.OpenIddict/CommunityAbp.ProgressiveDelivery.OpenIddict.csproj" />
     <Project Path="src/CommunityAbp.ProgressiveDelivery.OpenTelemetry/CommunityAbp.ProgressiveDelivery.OpenTelemetry.csproj" />
     <Project Path="src/CommunityAbp.ProgressiveDelivery.Web/CommunityAbp.ProgressiveDelivery.Web.csproj" />
   </Folder>
