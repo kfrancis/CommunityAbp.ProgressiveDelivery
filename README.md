@@ -425,7 +425,7 @@ Styling uses the active theme's Bootstrap variables (Basic and LeptonX). The des
 
 ### Finding subjects without pasting ids
 
-The override modal and the inspection page pick subjects with a search box instead of an id field:
+The override modal, the inspection page and the transition history filter pick subjects with a search box instead of an id field:
 
 - **Users** by user name, name or email (or a pasted id), through ABP's `IExternalUserLookupServiceProvider`. The
   Identity module registers one in process (the Identity HTTP API client does in tiered apps); with neither, user
@@ -441,7 +441,7 @@ The override modal and the inspection page pick subjects with a search box inste
 
 Assignment and transition listings show the subject's name next to its id (`SubjectDisplayName` on the DTOs).
 The API is `GET api/progressive-delivery/subjects/{types|search|find}` (`IFeatureSubjectLookupAppService`,
-`Assignments.View` or `.Override`). To make another subject type searchable, register an
+`Assignments.View`, `Assignments.Override` or `Telemetry`). To make another subject type searchable, register an
 `IFeatureSubjectLookupProvider`:
 
 ```csharp

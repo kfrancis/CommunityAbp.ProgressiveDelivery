@@ -7,7 +7,10 @@ using Volo.Abp.Authorization;
 
 namespace CommunityAbp.ProgressiveDelivery.Subjects;
 
-/// <remarks>Open to anyone who can view or override assignments: the override modal needs the picker.</remarks>
+/// <remarks>
+/// Open to anyone who can view or override assignments or read transition history: the override modal, inspection
+/// page and history filters all use the picker, and each already shows subject ids.
+/// </remarks>
 [Authorize]
 public class FeatureSubjectLookupAppService : ProgressiveDeliveryAppServiceBase, IFeatureSubjectLookupAppService
 {
@@ -68,7 +71,10 @@ public class FeatureSubjectLookupAppService : ProgressiveDeliveryAppServiceBase,
 
     protected virtual async Task CheckLookupPermissionAsync()
     {
-        if (!await AuthorizationService.IsGrantedAnyAsync(ProgressiveDeliveryPermissions.Assignments.View, ProgressiveDeliveryPermissions.Assignments.Override))
+        if (!await AuthorizationService.IsGrantedAnyAsync(
+                ProgressiveDeliveryPermissions.Assignments.View,
+                ProgressiveDeliveryPermissions.Assignments.Override,
+                ProgressiveDeliveryPermissions.Telemetry))
         {
             throw new AbpAuthorizationException(code: AbpAuthorizationErrorCodes.GivenPolicyHasNotGranted);
         }

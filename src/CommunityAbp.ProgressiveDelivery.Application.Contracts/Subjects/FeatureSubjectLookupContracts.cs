@@ -44,7 +44,7 @@ public class SearchFeatureSubjectsInput
 }
 
 /// <summary>
-/// Find subjects by name, user name, email, ... instead of pasting ids. Requires <c>ProgressiveDelivery.Assignments.View</c> or <c>ProgressiveDelivery.Assignments.Override</c>.
+/// Find subjects by name, user name, email, ... instead of pasting ids. Requires <c>ProgressiveDelivery.Assignments.View</c>, <c>ProgressiveDelivery.Assignments.Override</c> or <c>ProgressiveDelivery.Telemetry</c>.
 /// </summary>
 public interface IFeatureSubjectLookupAppService : IApplicationService
 {

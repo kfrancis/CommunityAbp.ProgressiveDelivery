@@ -1,4 +1,5 @@
 using CommunityAbp.ProgressiveDelivery.Permissions;
+using CommunityAbp.ProgressiveDelivery.Subjects;
 using CommunityAbp.ProgressiveDelivery.Tracks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,6 +21,8 @@ public class IndexModel : ProgressiveDeliveryPageModel
 
     public List<SelectListItem> TransitionTypeItems { get; private set; } = [];
 
+    public List<SelectListItem> SubjectTypeItems { get; private set; } = [];
+
     public bool CanFilterByTrack { get; private set; }
 
     public async Task OnGetAsync()
@@ -36,5 +39,9 @@ public class IndexModel : ProgressiveDeliveryPageModel
         TransitionTypeItems = [new SelectListItem(L["All"], string.Empty)];
         TransitionTypeItems.AddRange(Enum.GetValues<FeatureTransitionType>()
             .Select(t => new SelectListItem(L["Enum:FeatureTransitionType." + t], ((int)t).ToString())));
+
+        SubjectTypeItems = [new SelectListItem(L["AllSubjectTypes"], string.Empty)];
+        SubjectTypeItems.AddRange(new[] { FeatureSubjectTypes.User, FeatureSubjectTypes.Tenant, FeatureSubjectTypes.Client, FeatureSubjectTypes.Anonymous }
+            .Select(t => new SelectListItem(t, t)));
     }
 }

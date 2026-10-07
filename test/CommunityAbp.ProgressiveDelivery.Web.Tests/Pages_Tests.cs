@@ -121,6 +121,9 @@ public class Pages_Tests : ProgressiveDeliveryWebTestBase
         html.ShouldContain("TrackFilter");
         html.ShouldContain(ProgressiveDeliveryTestData.ClaimsTrack);
         html.ShouldContain("Automatic demotion");
+        html.ShouldContain("<select id=\"SubjectIdFilter\"");
+        html.ShouldContain("All subject types");
+        html.ShouldContain("Shared/subject-picker.js");
     }
 
     [Test]
