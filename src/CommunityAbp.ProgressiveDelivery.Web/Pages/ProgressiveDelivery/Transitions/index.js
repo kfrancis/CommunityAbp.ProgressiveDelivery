@@ -42,10 +42,10 @@ $(function () {
             {
                 title: l('Subject'), data: 'subjectId', orderable: false, render: function (d, t, row) {
                     if (!row.subjectType) {
-                            return '<span class="text-muted">' + l('Track') + '</span>';
-                        }
-                        return esc(row.subjectType) + ' '
-                            + (row.subjectDisplayName ? esc(row.subjectDisplayName) + ' <span class="pd-mono small text-muted">' + esc(d) + '</span>' : '<span class="pd-mono small">' + esc(d) + '</span>');
+                        return '<span class="text-muted">' + l('Track') + '</span>';
+                    }
+                    return esc(row.subjectType) + ' '
+                        + (row.subjectDisplayName ? esc(row.subjectDisplayName) + ' <span class="pd-mono small text-muted">' + esc(d) + '</span>' : '<span class="pd-mono small">' + esc(d) + '</span>');
                 }
             },
             { title: l('Reason'), data: 'reason', orderable: false, render: esc },
@@ -60,8 +60,29 @@ $(function () {
         ]
     }));
 
-    $('#TrackFilter, #TypeFilter').on('change', function () { dataTable.ajax.reload(); });
-    $('#SubjectTypeFilter, #SubjectIdFilter').on('keyup', function () { dataTable.ajax.reload(); });
+    var $subjectType = $('#SubjectTypeFilter');
+    var $subject = $('#SubjectIdFilter');
+
+    progressiveDelivery.subjectPicker($subject, {
+        getSubjectType: function () { return $subjectType.val(); },
+        allowClear: true,
+        placeholder: l('AnySubject')
+    });
+
+    function syncSubjectPicker() {
+        // Searching needs a subject type; "all types" filters by type only.
+        $subject.prop('disabled', !$subjectType.val());
+    }
+
+    $subjectType.on('change', function () {
+        $subject.val(null).trigger('change.select2');
+        syncSubjectPicker();
+        dataTable.ajax.reload();
+    });
+
+    $('#TrackFilter, #TypeFilter, #SubjectIdFilter').on('change', function () { dataTable.ajax.reload(); });
+
+    syncSubjectPicker();
 
     $(document).on('click', '.pd-chip', function () {
         var text = $(this).text();

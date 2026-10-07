@@ -123,6 +123,8 @@
     "TenantPlaceholder": "Host (no tenant)",
     "TenantPickerHelp": "Host only: the tenant the subject belongs to.",
     "TenantInactive": "Inactive",
+    "AllSubjectTypes": "All subject types",
+    "AnySubject": "Any subject",
     "TrackFilterHelp": "Leave empty to inspect every track.",
     "TenantIdHelp": "Host only: inspect the subject inside this tenant.",
     "NoTracksToInspect": "No tracks found.",
