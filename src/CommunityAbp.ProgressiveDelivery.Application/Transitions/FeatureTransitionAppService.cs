@@ -1,4 +1,5 @@
 using CommunityAbp.ProgressiveDelivery.Permissions;
+using CommunityAbp.ProgressiveDelivery.Subjects;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
 
@@ -21,6 +22,12 @@ public class FeatureTransitionAppService : ProgressiveDeliveryAppServiceBase, IF
             input.FeatureTrackId, input.SubjectType, input.SubjectId, input.TransitionType,
             input.Sorting, input.MaxResultCount, input.SkipCount);
 
-        return new PagedResultDto<FeatureTransitionDto>(count, ObjectMapper.Map<List<FeatureTransition>, List<FeatureTransitionDto>>(items));
+        var dtos = ObjectMapper.Map<List<FeatureTransition>, List<FeatureTransitionDto>>(items);
+        await FillSubjectDisplayNamesAsync(
+            dtos,
+            d => string.IsNullOrWhiteSpace(d.SubjectType) || string.IsNullOrWhiteSpace(d.SubjectId) ? null : new FeatureSubject(d.SubjectType, d.SubjectId, d.TenantId),
+            (d, name) => d.SubjectDisplayName = name);
+
+        return new PagedResultDto<FeatureTransitionDto>(count, dtos);
     }
 }

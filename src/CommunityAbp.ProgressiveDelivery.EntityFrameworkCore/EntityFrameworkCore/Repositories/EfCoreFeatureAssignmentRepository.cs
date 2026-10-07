@@ -51,6 +51,29 @@ public class EfCoreFeatureAssignmentRepository : EfCoreRepository<IProgressiveDe
             .LongCountAsync(GetCancellationToken(cancellationToken));
     }
 
+    public virtual async Task<List<string>> GetSubjectIdsAsync(
+        string subjectType,
+        string? filter = null,
+        int maxResultCount = int.MaxValue,
+        CancellationToken cancellationToken = default)
+    {
+        subjectType = FeatureSubject.NormalizeType(subjectType);
+        var query = (await GetQueryableAsync()).Where(a => a.SubjectType == subjectType);
+
+        if (!string.IsNullOrWhiteSpace(filter))
+        {
+            filter = filter.Trim();
+            query = query.Where(a => a.SubjectId.Contains(filter));
+        }
+
+        return await query
+            .Select(a => a.SubjectId)
+            .Distinct()
+            .OrderBy(id => id)
+            .Take(maxResultCount)
+            .ToListAsync(GetCancellationToken(cancellationToken));
+    }
+
     private static IQueryable<FeatureAssignment> ApplyFilter(IQueryable<FeatureAssignment> query, Guid? featureTrackId, string? subjectType, string? subjectId)
     {
         if (featureTrackId is { } trackId)

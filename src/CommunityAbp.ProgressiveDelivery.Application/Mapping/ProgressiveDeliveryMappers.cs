@@ -40,15 +40,19 @@ public partial class FeatureRolloutToDtoMapper : MapperBase<FeatureRollout, Feat
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class FeatureAssignmentToDtoMapper : MapperBase<FeatureAssignment, FeatureAssignmentDto>
 {
+    [MapperIgnoreTarget(nameof(FeatureAssignmentDto.SubjectDisplayName))]
     public override partial FeatureAssignmentDto Map(FeatureAssignment source);
 
+    [MapperIgnoreTarget(nameof(FeatureAssignmentDto.SubjectDisplayName))]
     public override partial void Map(FeatureAssignment source, FeatureAssignmentDto destination);
 }
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class FeatureTransitionToDtoMapper : MapperBase<FeatureTransition, FeatureTransitionDto>
 {
+    [MapperIgnoreTarget(nameof(FeatureTransitionDto.SubjectDisplayName))]
     public override partial FeatureTransitionDto Map(FeatureTransition source);
 
+    [MapperIgnoreTarget(nameof(FeatureTransitionDto.SubjectDisplayName))]
     public override partial void Map(FeatureTransition source, FeatureTransitionDto destination);
 }

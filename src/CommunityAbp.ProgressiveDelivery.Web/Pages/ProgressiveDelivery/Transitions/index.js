@@ -41,7 +41,11 @@ $(function () {
             },
             {
                 title: l('Subject'), data: 'subjectId', orderable: false, render: function (d, t, row) {
-                    return row.subjectType ? esc(row.subjectType) + ' <span class="pd-mono small">' + esc(d) + '</span>' : '<span class="text-muted">' + l('Track') + '</span>';
+                    if (!row.subjectType) {
+                            return '<span class="text-muted">' + l('Track') + '</span>';
+                        }
+                        return esc(row.subjectType) + ' '
+                            + (row.subjectDisplayName ? esc(row.subjectDisplayName) + ' <span class="pd-mono small text-muted">' + esc(d) + '</span>' : '<span class="pd-mono small">' + esc(d) + '</span>');
                 }
             },
             { title: l('Reason'), data: 'reason', orderable: false, render: esc },

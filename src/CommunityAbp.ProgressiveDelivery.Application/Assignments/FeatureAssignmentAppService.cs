@@ -1,4 +1,5 @@
 using CommunityAbp.ProgressiveDelivery.Permissions;
+using CommunityAbp.ProgressiveDelivery.Subjects;
 using CommunityAbp.ProgressiveDelivery.Tracks;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
@@ -27,7 +28,10 @@ public class FeatureAssignmentAppService : ProgressiveDeliveryAppServiceBase, IF
         var count = await _assignmentRepository.GetCountAsync(input.FeatureTrackId, input.SubjectType, input.SubjectId);
         var items = await _assignmentRepository.GetListAsync(input.FeatureTrackId, input.SubjectType, input.SubjectId, input.Sorting, input.MaxResultCount, input.SkipCount);
 
-        return new PagedResultDto<FeatureAssignmentDto>(count, ObjectMapper.Map<List<FeatureAssignment>, List<FeatureAssignmentDto>>(items));
+        var dtos = ObjectMapper.Map<List<FeatureAssignment>, List<FeatureAssignmentDto>>(items);
+        await FillSubjectDisplayNamesAsync(dtos, d => new FeatureSubject(d.SubjectType, d.SubjectId, d.TenantId), (d, name) => d.SubjectDisplayName = name);
+
+        return new PagedResultDto<FeatureAssignmentDto>(count, dtos);
     }
 
     [Authorize(ProgressiveDeliveryPermissions.Assignments.Override)]

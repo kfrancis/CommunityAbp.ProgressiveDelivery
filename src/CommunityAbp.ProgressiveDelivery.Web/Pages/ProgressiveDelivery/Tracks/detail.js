@@ -17,7 +17,11 @@ $(function () {
     var editLevelModal = new abp.ModalManager(abp.appPath + 'ProgressiveDelivery/Tracks/EditLevelModal');
     var startRolloutModal = new abp.ModalManager(abp.appPath + 'ProgressiveDelivery/Rollouts/StartModal');
     var editRolloutModal = new abp.ModalManager(abp.appPath + 'ProgressiveDelivery/Rollouts/EditModal');
-    var overrideModal = new abp.ModalManager(abp.appPath + 'ProgressiveDelivery/Assignments/OverrideModal');
+    var overrideModal = new abp.ModalManager({
+        viewUrl: abp.appPath + 'ProgressiveDelivery/Assignments/OverrideModal',
+        scriptUrl: abp.appPath + 'Pages/ProgressiveDelivery/Assignments/override-modal.js',
+        modalClass: 'ProgressiveDeliveryOverride'
+    });
 
     function reload() {
         window.location.reload();
@@ -133,17 +137,17 @@ $(function () {
                                 text: l('Override'),
                                 visible: canOverride,
                                 action: function (data) {
-                                    overrideModal.open({ trackName: trackName, subjectType: data.record.subjectType, subjectId: data.record.subjectId, level: data.record.assignedLevel });
+                                    overrideModal.open({ trackName: trackName, subjectType: data.record.subjectType, subjectId: data.record.subjectId, tenantId: data.record.tenantId, level: data.record.assignedLevel });
                                 }
                             },
                             {
                                 text: l('ResetToOfficial'),
                                 visible: canOverride,
                                 confirmMessage: function (data) {
-                                    return l('ResetConfirmationMessage', data.record.subjectType + ' ' + data.record.subjectId);
+                                    return l('ResetConfirmationMessage', data.record.subjectType + ' ' + (data.record.subjectDisplayName || data.record.subjectId));
                                 },
                                 action: function (data) {
-                                    assignmentService.reset({ trackName: trackName, subjectType: data.record.subjectType, subjectId: data.record.subjectId, reason: 'Reset from track detail' }).then(function () {
+                                    assignmentService.reset({ trackName: trackName, subjectType: data.record.subjectType, subjectId: data.record.subjectId, tenantId: data.record.tenantId, useCurrentTenant: !data.record.tenantId, reason: 'Reset from track detail' }).then(function () {
                                         abp.notify.info(l('SavedSuccessfully'));
                                         assignmentsTable.ajax.reload();
                                     });
@@ -153,7 +157,13 @@ $(function () {
                     }
                 },
                 { title: l('SubjectType'), data: 'subjectType' },
-                { title: l('SubjectId'), data: 'subjectId', render: function (d) { return '<span class="pd-mono">' + esc(d) + '</span>'; } },
+                {
+                    title: l('Subject'), data: 'subjectId', render: function (d, t, row) {
+                        return row.subjectDisplayName
+                            ? esc(row.subjectDisplayName) + ' <span class="pd-mono small text-muted">' + esc(d) + '</span>'
+                            : '<span class="pd-mono">' + esc(d) + '</span>';
+                    }
+                },
                 {
                     title: l('AssignedLevel'), data: 'assignedLevel', render: function (d) {
                         var official = parseInt($root.data('official-level'), 10);
@@ -204,7 +214,11 @@ $(function () {
                 },
                 {
                     title: l('Subject'), data: 'subjectId', orderable: false, render: function (d, t, row) {
-                        return row.subjectType ? esc(row.subjectType) + ' <span class="pd-mono small">' + esc(d) + '</span>' : '<span class="text-muted">' + l('Track') + '</span>';
+                        if (!row.subjectType) {
+                            return '<span class="text-muted">' + l('Track') + '</span>';
+                        }
+                        return esc(row.subjectType) + ' '
+                            + (row.subjectDisplayName ? esc(row.subjectDisplayName) + ' <span class="pd-mono small text-muted">' + esc(d) + '</span>' : '<span class="pd-mono small">' + esc(d) + '</span>');
                     }
                 },
                 { title: l('Reason'), data: 'reason', orderable: false, render: esc },
